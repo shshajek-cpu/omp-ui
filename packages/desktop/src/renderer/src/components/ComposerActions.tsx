@@ -40,18 +40,18 @@ export function ComposerActions({
   onAbort: () => void;
 }) {
   const label = (verb: "send" | "steer") => {
-    const word = isSlash ? "run" : verb;
-    return layout === "compact" ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+    if (isSlash) return "실행";
+    return verb === "send" ? "보내기" : "개입";
   };
 
   if (layout === "sheet") {
     if (!running) return null;
     return (
       <section className="rounded-xl border border-line bg-raised/60 p-3">
-        <Label>while running</Label>
+        <Label>실행 중 동작</Label>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <Button disabled={!canSend} onClick={() => onSubmit("follow_up")} className="min-h-11 justify-center">Queue</Button>
-          <Button disabled={!canSend} onClick={() => onSubmit("interrupt")} className="min-h-11 min-w-0 justify-center px-2">Interrupt-and-send</Button>
+          <Button disabled={!canSend} onClick={() => onSubmit("follow_up")} className="min-h-11 justify-center">대기열에 추가</Button>
+          <Button disabled={!canSend} onClick={() => onSubmit("interrupt")} className="min-h-11 min-w-0 justify-center px-2">중단 후 보내기</Button>
         </div>
       </section>
     );
@@ -61,7 +61,7 @@ export function ComposerActions({
     return running ? (
       <>
         <Button tone="copper" variant="solid" disabled={!canSend} onClick={() => onSubmit("steer")} className="h-11 rounded-lg px-4">{label("steer")}</Button>
-        <Button tone="rose" variant="outline" onClick={onAbort} className="h-11 rounded-lg px-3">Abort</Button>
+        <Button tone="rose" variant="outline" onClick={onAbort} className="h-11 rounded-lg px-3">중단</Button>
       </>
     ) : (
       <Button variant="solid" disabled={!canSend} onClick={() => onSubmit("prompt")} className="h-11 gap-1.5 rounded-lg px-4">
@@ -77,31 +77,31 @@ export function ComposerActions({
         size="xs"
         variant="ghost"
         disabled={!canSend}
-        title="abort the current turn, then send this as a fresh prompt (mod+shift+enter)"
+        title="현재 턴을 중단하고 새 프롬프트로 보내기 (mod+shift+enter)"
         onClick={() => onSubmit("interrupt")}
         className="min-w-0 shrink"
       >
-        <span className="min-w-0 truncate">interrupt & send</span>
+        <span className="min-w-0 truncate">중단 후 보내기</span>
       </Button>
       <Button
         size="xs"
         disabled={!canSend}
-        title="queue this for after the current turn (mod+enter)"
+        title="현재 턴이 끝난 뒤 실행하도록 대기열에 추가 (mod+enter)"
         onClick={() => onSubmit("follow_up")}
       >
-        queue
+        대기열
       </Button>
       <Button
         size="xs"
         tone="copper"
         disabled={!canSend}
-        title="inject this into the running turn (enter)"
+        title="실행 중인 턴에 내용 삽입 (enter)"
         onClick={() => onSubmit("steer")}
       >
         {label("steer")}
       </Button>
       <IconButton
-        label="abort the agent (esc)"
+        label="에이전트 중단 (esc)"
         tone="rose"
         onClick={onAbort}
         // The one destructive control here: readable before hover.
@@ -125,7 +125,7 @@ export function ComposerActions({
       size="xs"
       variant="solid"
       disabled={!canSend}
-      title={isSlash ? "run this command (enter)" : "send (enter) · shift+enter for a newline"}
+      title={isSlash ? "명령 실행 (enter)" : "보내기 (enter) · 줄바꿈은 shift+enter"}
       onClick={() => onSubmit("prompt")}
     >
       {label("send")}

@@ -337,26 +337,27 @@ describe("desktop view restore across an AppImage update relaunch (issue #99)", 
     const spy = vi.spyOn(Storage.prototype, "setItem");
 
     await store.useStore.getState().init();
-    // init also persists the viewed-tab reporter's one-time clientId
-    // (issue #266); every later write is a view snapshot.
-    expect(spy).toHaveBeenCalledTimes(2);
+    // Init may also persist renderer-owned bootstrap state such as the viewed-tab
+    // reporter clientId and the first-paint font choice. Later assertions are
+    // relative so adding unrelated bootstrap keys cannot weaken the view contract.
+    const afterInit = spy.mock.calls.length;
 
     store.useStore.setState({ rpc: { someTab: rpcTabState() } });
-    expect(spy).toHaveBeenCalledTimes(2); // rpc traffic never persists
+    expect(spy).toHaveBeenCalledTimes(afterInit); // rpc traffic never persists
 
     store.useStore.getState().setSidebarWidth(400);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(afterInit + 1);
     store.useStore.getState().setInspectorWidth(260);
-    expect(spy).toHaveBeenCalledTimes(4);
+    expect(spy).toHaveBeenCalledTimes(afterInit + 2);
 
     store.useStore.setState({ tabs: [tabInfo({ tabId: "t1", mode: "rpc-ui", projectCwd: "/p/a", hidden: false })], rpc: {} });
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(afterInit + 3);
 
     store.useStore.getState().focusTab("t1");
-    expect(spy).toHaveBeenCalledTimes(6);
+    expect(spy).toHaveBeenCalledTimes(afterInit + 4);
 
     store.useStore.getState().hideTab("t1");
-    expect(spy).toHaveBeenCalledTimes(7);
+    expect(spy).toHaveBeenCalledTimes(afterInit + 5);
   });
 
   it("onStateChanged prunes focus entries whose tab or project is gone", async () => {

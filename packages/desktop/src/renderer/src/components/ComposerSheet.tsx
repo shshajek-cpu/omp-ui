@@ -45,10 +45,10 @@ export function ComposerSheet({
   const queueChip = queueChipView(running, queued);
 
   return (
-    <Sheet open={open} placement="bottom" label="prompt options" onClose={onClose}>
+    <Sheet open={open} placement="bottom" label="프롬프트 옵션" onClose={onClose}>
       <div className="prompt-options space-y-5 px-[max(1rem,var(--safe-left))] py-4 pr-[max(1rem,var(--safe-right))]">
         <section className="rounded-xl border border-line bg-raised/60 p-3">
-          <Label>model &amp; effort</Label>
+          <Label>모델과 사고 수준</Label>
           <div className="mt-2 flex min-h-11 items-center rounded-lg border border-line bg-void/35 px-2">
             <ModelSelector tabId={tabId} disabled={unavailable} />
           </div>
@@ -59,12 +59,12 @@ export function ComposerSheet({
           )}
         </section>
         <section className="rounded-xl border border-line bg-raised/60 p-3">
-          <Label>session</Label>
+          <Label>세션</Label>
           <div className="mt-2 space-y-2">
             <AdvisorControl tabId={tabId} disabled={unavailable} layout="sheet" />
             <BuildPlanControl tabId={tabId} layout="sheet" disabled={unavailable} className="min-h-11" />
             <div className="flex min-h-11 items-center justify-between gap-2 rounded-lg border border-line bg-void/35 px-3">
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">branch</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">브랜치</span>
               <span className="flex min-w-0 items-center gap-2"><BranchChip projectCwd={projectCwd} />{queueChip && <Chip mono tone="copper" title={queueChip.title}>{queueChip.label}</Chip>}</span>
             </div>
           </div>

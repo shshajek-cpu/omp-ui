@@ -126,13 +126,13 @@ describe("ComposerSheet", () => {
     render(true);
     const dialog = document.querySelector('[role="dialog"]')!;
     expect(dialog).not.toBeNull();
-    expect(dialog.textContent).toContain("model & effort");
+    expect(dialog.textContent).toContain("모델과 사고 수준");
     expect(dialog.textContent).toContain("model-x");
     for (const effort of ["low", "medium", "high"]) {
       expect(dialog.textContent).toContain(effort);
     }
-    expect(dialog.textContent).toContain("session");
-    expect(dialog.textContent).toContain("branch");
+    expect(dialog.textContent).toContain("세션");
+    expect(dialog.textContent).toContain("브랜치");
     // Idle, so the parked items are labeled parked, not queued.
     expect(dialog.textContent).toContain("parked: 2");
   });
@@ -148,10 +148,10 @@ describe("ComposerSheet", () => {
   it("hides the while-running section while idle", () => {
     seed("ready");
     render(true);
-    expect(document.body.textContent).not.toContain("while running");
+    expect(document.body.textContent).not.toContain("실행 중 동작");
     expect(
       [...document.querySelectorAll<HTMLButtonElement>("button")].some(
-        (button) => button.textContent === "Queue",
+        (button) => button.textContent === "대기열에 추가",
       ),
     ).toBe(false);
   });
@@ -159,9 +159,9 @@ describe("ComposerSheet", () => {
   it("offers Queue and Interrupt-and-send while running, routing to their verbs", async () => {
     seed("running");
     render(true);
-    expect(document.body.textContent).toContain("while running");
-    const queue = buttonByText("Queue");
-    const interrupt = buttonByText("Interrupt-and-send");
+    expect(document.body.textContent).toContain("실행 중 동작");
+    const queue = buttonByText("대기열에 추가");
+    const interrupt = buttonByText("중단 후 보내기");
     await act(async () => queue.click());
     expect(onSubmitRoute).toHaveBeenCalledWith("follow_up");
     await act(async () => interrupt.click());
@@ -171,7 +171,7 @@ describe("ComposerSheet", () => {
   it("the sheet close control calls onClose", () => {
     seed("ready");
     render(true);
-    const close = document.querySelector<HTMLButtonElement>('button[aria-label="close prompt options"]')!;
+    const close = document.querySelector<HTMLButtonElement>('button[aria-label="close 프롬프트 옵션"]')!;
     expect(close).not.toBeNull();
     act(() => close.click());
     expect(onClose).toHaveBeenCalledOnce();

@@ -50,7 +50,7 @@ describe("ComposerActions desktop", () => {
     mount({ layout: "desktop" });
     const all = buttons();
     expect(all).toHaveLength(1);
-    expect(all[0]!.textContent).toBe("send");
+    expect(all[0]!.textContent).toBe("보내기");
     click(all[0]!);
     expect(onSubmit).toHaveBeenCalledWith("prompt");
     expect(onAbort).not.toHaveBeenCalled();
@@ -59,8 +59,8 @@ describe("ComposerActions desktop", () => {
   it("idle: a slash draft reads run with the command title", () => {
     mount({ layout: "desktop", isSlash: true });
     const button = buttons()[0]!;
-    expect(button.textContent).toBe("run");
-    expect(button.title).toBe("run this command (enter)");
+    expect(button.textContent).toBe("실행");
+    expect(button.title).toBe("명령 실행 (enter)");
   });
 
   it("idle: the send button is disabled without a draft", () => {
@@ -71,10 +71,10 @@ describe("ComposerActions desktop", () => {
   it("running: exactly four controls, each firing its route", () => {
     mount({ layout: "desktop", running: true });
     const [interrupt, queue, steer, abort] = buttons();
-    expect(interrupt!.textContent).toBe("interrupt & send");
-    expect(queue!.textContent).toBe("queue");
-    expect(steer!.textContent).toBe("steer");
-    expect(abort!.title).toBe("abort the agent (esc)");
+    expect(interrupt!.textContent).toBe("중단 후 보내기");
+    expect(queue!.textContent).toBe("대기열");
+    expect(steer!.textContent).toBe("개입");
+    expect(abort!.title).toBe("에이전트 중단 (esc)");
 
     click(interrupt!);
     expect(onSubmit).toHaveBeenCalledWith("interrupt");
@@ -89,7 +89,7 @@ describe("ComposerActions desktop", () => {
 
   it("running: a slash draft renames steer to run", () => {
     mount({ layout: "desktop", running: true, isSlash: true });
-    expect(buttons()[2]!.textContent).toBe("run");
+    expect(buttons()[2]!.textContent).toBe("실행");
   });
 
   it("running: canSend false disables the send routes but not abort", () => {
@@ -106,7 +106,7 @@ describe("ComposerActions compact", () => {
   it("idle: capitalized send with the arrow glyph, click fires the prompt route", () => {
     mount({ layout: "compact" });
     const [send] = buttons();
-    expect(send!.textContent).toBe("Send");
+    expect(send!.textContent).toBe("보내기");
     expect(send!.querySelector("svg")).not.toBeNull();
     click(send!);
     expect(onSubmit).toHaveBeenCalledWith("prompt");
@@ -114,14 +114,14 @@ describe("ComposerActions compact", () => {
 
   it("idle: a slash draft reads Run", () => {
     mount({ layout: "compact", isSlash: true });
-    expect(buttons()[0]!.textContent).toBe("Run");
+    expect(buttons()[0]!.textContent).toBe("실행");
   });
 
   it("running: steer and abort", () => {
     mount({ layout: "compact", running: true });
     const [steer, abort] = buttons();
-    expect(steer!.textContent).toBe("Steer");
-    expect(abort!.textContent).toBe("Abort");
+    expect(steer!.textContent).toBe("개입");
+    expect(abort!.textContent).toBe("중단");
     click(steer!);
     expect(onSubmit).toHaveBeenCalledWith("steer");
     click(abort!);
@@ -130,7 +130,7 @@ describe("ComposerActions compact", () => {
 
   it("running: a slash draft reads Run", () => {
     mount({ layout: "compact", running: true, isSlash: true });
-    expect(buttons()[0]!.textContent).toBe("Run");
+    expect(buttons()[0]!.textContent).toBe("실행");
   });
 });
 
@@ -144,8 +144,8 @@ describe("ComposerActions sheet", () => {
   it("running: Queue and Interrupt-and-send fire their routes", () => {
     mount({ layout: "sheet", running: true });
     const [queue, interrupt] = buttons();
-    expect(queue!.textContent).toBe("Queue");
-    expect(interrupt!.textContent).toBe("Interrupt-and-send");
+    expect(queue!.textContent).toBe("대기열에 추가");
+    expect(interrupt!.textContent).toBe("중단 후 보내기");
     click(queue!);
     expect(onSubmit).toHaveBeenCalledWith("follow_up");
     click(interrupt!);
@@ -166,7 +166,7 @@ describe("ComposerActions label parity", () => {
       document.body.replaceChildren();
       mount({ layout, running: true, isSlash: true });
       const visible = buttons().map((button) => button.textContent ?? "");
-      for (const word of ["send", "steer", "Send", "Steer"]) {
+      for (const word of ["send", "steer", "보내기", "개입"]) {
         expect(visible, `${layout}: ${word}`).not.toContain(word);
       }
     }

@@ -4,7 +4,7 @@ import { cn } from "../lib/cn";
 import { deriveSidebarSessionState, useStore, type SidebarSessionState } from "../store";
 import { Button, Dot, IconButton, IconGrip, type Tone } from "./ui";
 
-const MISSING_HINT = "session files are gone from disk — delete the record";
+const MISSING_HINT = "세션 파일이 디스크에 없습니다. 목록에서 기록을 삭제하세요.";
 
 const SESSION_FACE: Record<
   SidebarSessionState,
@@ -13,71 +13,71 @@ const SESSION_FACE: Record<
   working: {
     tone: "copper",
     pulse: true,
-    label: "working",
-    title: "Agent is working",
+    label: "작업 중",
+    title: "에이전트가 작업 중입니다",
     textClass: "text-copper",
   },
   "awaiting-answer": {
     tone: "iris",
     pulse: false,
-    label: "answer needed",
-    title: "Agent is waiting for your answer",
+    label: "응답 필요",
+    title: "에이전트가 답변을 기다리고 있습니다",
     textClass: "text-iris",
   },
   stalled: {
     tone: "copper",
     pulse: false,
-    label: "stalled",
+    label: "멈춤",
     title:
-      "omp-ui aborted a turn whose model stream went silently dead — stall auto-continue or a prompt resumes it; the badge clears when the next turn starts",
+      "모델 스트림이 끊겨 턴을 중단했습니다. 자동 계속 또는 새 프롬프트로 재개할 수 있습니다.",
     textClass: "text-copper",
   },
   ready: {
     tone: "signal",
     pulse: false,
-    label: "ready",
-    title: "Agent finished output and is ready",
+    label: "준비",
+    title: "에이전트 응답이 끝나 다음 작업을 받을 수 있습니다",
     textClass: "text-signal",
   },
   starting: {
     tone: "neutral",
     pulse: true,
-    label: "starting",
-    title: "Native session is starting",
+    label: "시작 중",
+    title: "네이티브 세션을 시작하고 있습니다",
     textClass: "text-ink-mid",
   },
   error: {
     tone: "rose",
     pulse: false,
-    label: "error",
-    title: "Native session hit an error",
+    label: "오류",
+    title: "네이티브 세션에서 오류가 발생했습니다",
     textClass: "text-rose",
   },
   live: {
     tone: "signal",
     pulse: false,
-    label: "live",
-    title: "Session process is live; detailed activity is unavailable",
+    label: "실행 중",
+    title: "세션 프로세스가 실행 중이며 자세한 활동은 확인할 수 없습니다",
     textClass: "text-signal",
   },
   dormant: {
     tone: "neutral",
     pulse: false,
-    label: "dormant",
-    title: "Session is dormant",
+    label: "대기",
+    title: "세션이 대기 상태입니다",
     textClass: "text-ink-mid",
   },
   archived: {
     tone: "copper",
     pulse: false,
-    label: "archived",
-    title: "Session is archived",
+    label: "보관됨",
+    title: "세션이 보관되어 있습니다",
     textClass: "text-copper",
   },
   missing: {
     tone: "rose",
     pulse: false,
-    label: "missing",
+    label: "파일 없음",
     title: MISSING_HINT,
     textClass: "text-rose",
   },
@@ -93,14 +93,14 @@ export function relativeTime(iso: string | null): string {
   const then = Date.parse(iso);
   if (Number.isNaN(then)) return "";
   const secs = Math.round((Date.now() - then) / 1000);
-  if (secs < 45) return "just now";
+  if (secs < 45) return "방금";
   const mins = Math.round(secs / 60);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return `${mins}분 전`;
   const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}시간 전`;
   const days = Math.round(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(then).toLocaleDateString([], { month: "short", day: "numeric" });
+  if (days < 7) return `${days}일 전`;
+  return new Date(then).toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
 }
 
 function absoluteTime(iso: string | null): string {

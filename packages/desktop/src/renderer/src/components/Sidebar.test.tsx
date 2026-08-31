@@ -821,7 +821,7 @@ describe("Sidebar project open control (issue #169)", () => {
     });
     renderSidebar();
     await resolveAvailability(availability, false);
-    expect(document.body.textContent).toContain("no sessions yet");
+    expect(document.body.textContent).toContain("아직 세션이 없습니다");
     await act(async () => button("Open Project One in Files").click());
     expect(backendMock.openProject).toHaveBeenCalledWith(projectPath, "files");
     await act(async () => chooseOpen("Project One").click());
@@ -1132,7 +1132,7 @@ describe("Sidebar pagination follows a project's own focus (issue #99)", () => {
     if (bLast === undefined) console.error("DEBUG DOM:", document.body.innerHTML);
     expect(bLast).not.toBeUndefined();
     // Pagination widened past the first PAGE (8) page.
-    expect(document.body.textContent).toContain("showing 9 of 9");
+    expect(document.body.textContent).toContain("전체 9개 중 9개 표시");
 
     // Selection styling is global: A-1 (the global activeTabId) is marked.
     const aFirst = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
@@ -1264,7 +1264,7 @@ describe("Sidebar project drag-and-drop (issue #115)", () => {
     // Project headers (3) and their reorderable tree roots (2 sessions each,
     // issue #274) all carry the drag affordance.
     expect(document.querySelectorAll('[draggable="true"]')).toHaveLength(9);
-    const filter = document.querySelector<HTMLInputElement>('input[aria-label="filter sessions"]');
+    const filter = document.querySelector<HTMLInputElement>('input[aria-label="세션 검색"]');
     expect(filter).not.toBeNull();
     // React reads the value off its own descriptor, so a bare `.value =` write
     // is invisible to onChange; the native setter is what a real keystroke does.
@@ -1643,7 +1643,7 @@ describe("Sidebar keyboard session reorder (issue #274)", () => {
   it("hides grips while the filter is active", async () => {
     renderSidebar();
     expect(document.body.querySelectorAll('button[aria-label^="reorder "]').length).toBeGreaterThan(0);
-    const filter = document.querySelector<HTMLInputElement>('input[aria-label="filter sessions"]');
+    const filter = document.querySelector<HTMLInputElement>('input[aria-label="세션 검색"]');
     const setValue = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       "value",
@@ -1772,7 +1772,7 @@ describe("Sidebar plan handoffs (issue #238)", () => {
 
   function setFilter(value: string): void {
     const input = document.body.querySelector<HTMLInputElement>(
-      'input[aria-label="filter sessions"]',
+      'input[aria-label="세션 검색"]',
     );
     if (input === null) throw new Error("filter input not found");
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
@@ -1908,7 +1908,7 @@ describe("Sidebar plan handoffs (issue #238)", () => {
     // Both tree rows render even though the ninth row is past the page.
     expect(row("Plan dark mode")).toBeDefined();
     expect(row("Implement dark mode")).toBeDefined();
-    expect(document.body.textContent).toContain("showing 9 of 9");
+    expect(document.body.textContent).toContain("전체 9개 중 9개 표시");
     // Nothing remains, so no "show more" — the page was widened, not split.
     const showMore = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
       (candidate) =>

@@ -49,7 +49,7 @@ export function TodoPanel({ tabId }: { tabId: string }) {
   const setTodos = useStore((s) => s.setTodos);
 
   if (phases.length === 0) {
-    return <Empty title="No todos" hint="The agent publishes a plan here once it starts one." />;
+    return <Empty title="할 일 없음" hint="에이전트가 작업 목록을 만들면 여기에 표시됩니다." />;
   }
 
   const cycle = (phaseIndex: number, taskIndex: number): void => {

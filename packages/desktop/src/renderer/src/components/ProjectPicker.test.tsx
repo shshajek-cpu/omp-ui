@@ -111,7 +111,7 @@ async function renderPicker(): Promise<void> {
 
 function input(): HTMLInputElement {
   const found = document.body.querySelector<HTMLInputElement>(
-    'input[aria-label="project directory path"]',
+    'input[aria-label="프로젝트 폴더 경로"]',
   );
   if (found === null) throw new Error("picker input not found");
   return found;
@@ -172,7 +172,7 @@ describe("ProjectPicker", () => {
     backendMock.addProject.mockResolvedValue({});
     await renderPicker();
     const accept = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
-      (button) => button.textContent === "Add project",
+      (button) => button.textContent === "프로젝트 추가",
     );
     expect(accept).toBeDefined();
     await act(async () => accept!.click());
@@ -191,9 +191,9 @@ describe("ProjectPicker", () => {
     expect(rowNames()).toEqual(["..", "alpha", "beta"]);
     expect(document.body.textContent).not.toContain("Esc");
     expect(document.body.querySelector('button[aria-label="close dialog"]')).not.toBeNull();
-    expect(document.body.textContent).toContain(`will add: ${HOME}`);
+    expect(document.body.textContent).toContain(`추가할 경로: ${HOME}`);
     const accept = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
-      (button) => button.textContent === "Add project",
+      (button) => button.textContent === "프로젝트 추가",
     );
     expect(accept).toBeDefined();
     await act(async () => accept!.click());
@@ -237,7 +237,7 @@ describe("ProjectPicker", () => {
     await press("n", { ctrlKey: true });
     await press("p", { ctrlKey: true });
     expect(rowNames()).toEqual([]);
-    expect(document.body.textContent).toContain("No matching directories");
+    expect(document.body.textContent).toContain("일치하는 폴더가 없습니다");
 
     await press("Enter");
     expect(backendMock.addProject).toHaveBeenCalledWith("/");

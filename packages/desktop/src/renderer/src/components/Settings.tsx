@@ -52,14 +52,14 @@ const PAGES: ReadonlyArray<{
   render: (ctx: PageContext) => ReactNode;
   footer?: ComponentType<FooterContext>;
 }> = [
-  { id: "general", label: "General", render: () => <GeneralPage />, footer: GeneralFooter },
-  { id: "appearance", label: "Appearance", render: () => <AppearancePage /> },
-  { id: "updates", label: "Updates", render: () => <UpdatesPage />, footer: UpdatesFooter },
-  { id: "remote", label: "Remote access", render: () => <RemotePage />, footer: RemoteFooter },
-  { id: "providers", label: "Providers", render: (ctx) => <ProvidersPage projectCwd={ctx.projectCwd} />, footer: ProvidersFooter },
+  { id: "general", label: "일반", render: () => <GeneralPage />, footer: GeneralFooter },
+  { id: "appearance", label: "모양", render: () => <AppearancePage /> },
+  { id: "updates", label: "업데이트", render: () => <UpdatesPage />, footer: UpdatesFooter },
+  { id: "remote", label: "원격 접속", render: () => <RemotePage />, footer: RemoteFooter },
+  { id: "providers", label: "제공자", render: (ctx) => <ProvidersPage projectCwd={ctx.projectCwd} />, footer: ProvidersFooter },
   {
     id: "memory",
-    label: "Memory",
+    label: "메모리",
     render: (ctx) => (
       <MemoryPage
         load={ctx.load}
@@ -88,7 +88,7 @@ const PAGES: ReadonlyArray<{
     ),
     footer: OmpFooter,
   },
-  { id: "about", label: "About", render: (ctx) => <AboutPage load={ctx.load} /> },
+  { id: "about", label: "정보", render: (ctx) => <AboutPage load={ctx.load} /> },
 ];
 
 export function Settings() {
@@ -169,13 +169,13 @@ export function Settings() {
       >
         <header className="settings-header border-b border-line px-4 py-3.5">
           <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint">
-            Application
+            애플리케이션
           </p>
           <h2
             id="settings-title"
             className="font-display text-base font-semibold text-ink"
           >
-            Settings
+            설정
           </h2>
         </header>
 

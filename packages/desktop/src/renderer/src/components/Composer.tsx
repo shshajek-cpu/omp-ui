@@ -563,12 +563,12 @@ export function Composer({
   };
 
   const placeholder = dead
-    ? "agent exited — resume to continue"
+    ? "에이전트가 종료되었습니다 — 계속하려면 다시 시작하세요"
     : relaunching
-      ? "restarting advisor…"
+      ? "어드바이저를 다시 시작하는 중…"
       : running
-        ? "steer the agent…"
-        : "message the agent…   /  commands · @  files";
+        ? "실행 중인 에이전트에 개입…"
+        : "에이전트에게 메시지…   / 명령 · @ 파일";
 
   // An image alone is sendable: "what is this?" is in the picture, not the text.
   const canSend = (trimmed !== "" || images.length > 0) && !unavailable && !converting;
@@ -665,11 +665,11 @@ export function Composer({
                 </span>
               ))}
               <Label className="ml-0.5">
-                {images.length} image{images.length === 1 ? "" : "s"}
+                이미지 {images.length}개
               </Label>
               {!vision && (
-                <Chip tone="copper" title="the selected model accepts text only — omp will drop these">
-                  model has no vision
+                <Chip tone="copper" title="선택한 모델은 텍스트만 지원하므로 omp가 이미지를 제외합니다">
+                  선택한 모델은 이미지를 지원하지 않습니다
                 </Chip>
               )}
             </div>
@@ -747,8 +747,8 @@ export function Composer({
                   disabled={unavailable}
                   title={
                     efforts.length > 0
-                      ? `thinking level — click to pick (${efforts.join(", ")})`
-                      : "thinking level"
+                      ? `사고 수준 — 눌러서 선택 (${efforts.join(", ")})`
+                      : "사고 수준"
                   }
                   onClick={() => {
                     if (efforts.length > 0) setEffortMenu((m) => !m);
@@ -758,12 +758,12 @@ export function Composer({
                     "shrink-0 rounded-r-[5px] font-mono text-[11px] tabular-nums text-iris",
                   )}
                 >
-                  {thinkingLevel ?? "think —"}
+                  {thinkingLevel ?? "사고 —"}
                 </button>
                 {effortMenu && (
                   <div className="animate-rise edge-lit absolute bottom-full left-0 z-20 mb-1 flex w-32 flex-col rounded-md border border-line-strong bg-overlay p-1">
                     <span className="px-1.5 pb-1 pt-0.5">
-                      <Label>thinking</Label>
+                      <Label>사고 수준</Label>
                     </span>
                     {efforts.map((effort) => (
                       <button
@@ -836,14 +836,14 @@ export function Composer({
               <AttachmentButton compact disabled={unavailable} onClick={() => imagePicker.current?.click()} />
               <Button
                 variant="ghost"
-                title="prompt options"
+                title="프롬프트 옵션"
                 className="h-11 min-w-0 flex-1 justify-start gap-2 px-2 text-ink-mid"
                 disabled={unavailable}
                 onClick={() => showCompactSurface("composer-options")}
               >
                 <IconTune className="size-4 shrink-0" />
-                <span className="truncate font-mono text-[11px]">{currentModel?.name || currentModel?.id || "no model"}</span>
-                <span className="sr-only">prompt options</span>
+                <span className="truncate font-mono text-[11px]">{currentModel?.name || currentModel?.id || "모델 없음"}</span>
+                <span className="sr-only">프롬프트 옵션</span>
               </Button>
               {queueChip && <Chip mono tone="copper" title={queueChip.title}>{queued}</Chip>}
               <ComposerActions
@@ -898,12 +898,12 @@ export function Composer({
                 <span className="min-w-0 flex-1 break-words text-copper" data-selectable>
                   {workspaceError}
                 </span>
-                <IconButton label="dismiss worktree error" onClick={() => setWorkspaceError(null)}>
+                <IconButton label="워크트리 오류 닫기" onClick={() => setWorkspaceError(null)}>
                   <IconClose className="size-3" />
                 </IconButton>
               </>
             ) : (
-              <span className="text-ink-faint">cutting the worktree…</span>
+              <span className="text-ink-faint">워크트리를 만드는 중…</span>
             )}
           </div>
         )}

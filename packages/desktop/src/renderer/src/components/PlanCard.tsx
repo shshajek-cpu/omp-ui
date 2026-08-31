@@ -40,7 +40,7 @@ export function PlanCard({ item }: { item: PlanItem }) {
                   // Same empty sandbox as the review modal: no scripts, no
                   // same-origin access, no navigation (ADR-0007).
                   <iframe
-                    title="proposed plan"
+                    title="제안된 계획"
                     sandbox=""
                     srcDoc={prepared.status === "ready" ? prepared.doc : ""}
                     className="h-[28rem] w-full rounded-md border border-line bg-white"

@@ -284,7 +284,7 @@ export function AttachmentButton({
       variant="ghost"
       tone="neutral"
       disabled={disabled}
-      title="attach images"
+      title="이미지 첨부"
       onClick={onClick}
       className={compact
         ? "h-11 min-h-11 w-11 min-w-11 justify-center p-0"

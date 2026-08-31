@@ -17,13 +17,13 @@ import { CommitField, FIELD, Row } from "./rows";
 function remoteStatusLine(r: RemoteState): string {
   switch (r.status) {
     case "starting":
-      return "starting…";
+      return "시작 중…";
     case "listening":
-      return `listening on ${r.port}`;
+      return `${r.port} 포트에서 대기 중`;
     case "error":
-      return r.error ?? "the server could not start";
+      return r.error ?? "서버를 시작하지 못했습니다";
     default:
-      return "stopped";
+      return "중지됨";
   }
 }
 
@@ -74,11 +74,11 @@ function PairingQr({ url, hasPassword }: { url: string; hasPassword: boolean }) 
         dangerouslySetInnerHTML={{ __html: svg }}
       />
       <div className="min-w-0">
-        <Label>Scan to pair</Label>
+        <Label>QR 코드로 연결</Label>
         <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">
           {hasPassword
-            ? "Opens omp-ui in the phone&apos;s browser; it will ask for your password."
-            : "Opens omp-ui in the phone&apos;s browser with the token already attached."}
+            ? "휴대전화 브라우저에서 omp-ui를 열고 비밀번호를 요청합니다."
+            : "접속 토큰을 포함해 휴대전화 브라우저에서 omp-ui를 엽니다."}
         </p>
       </div>
     </Panel>
@@ -119,26 +119,26 @@ function PasswordRow() {
     <div className="py-2.5">
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-ink">Password</p>
+          <p className="text-xs font-medium text-ink">비밀번호</p>
           <p className="mt-0.5 text-[11px] leading-relaxed text-ink-faint">
-            Primary sign-in for remote devices. Stored as a salted hash — it cannot
-            be revealed, only changed or cleared.
+            원격 기기의 기본 로그인 수단입니다. 솔트 해시로 저장되므로 확인할 수 없고
+            변경하거나 지울 수만 있습니다.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           {!editing && !hasPassword && (
             <Button size="xs" onClick={() => setEditing(true)}>
-              Set password
+              비밀번호 설정
             </Button>
           )}
           {!editing && hasPassword && (
             <>
-              <span className="text-[11px] text-ink-mid">password set</span>
+              <span className="text-[11px] text-ink-mid">비밀번호 설정됨</span>
               <Button size="xs" variant="ghost" onClick={() => setEditing(true)}>
-                Change
+                변경
               </Button>
               <Button size="xs" onClick={() => void clearRemotePassword()}>
-                Clear
+                지우기
               </Button>
             </>
           )}
@@ -150,8 +150,8 @@ function PasswordRow() {
             ref={input}
             type="password"
             value={draft}
-            aria-label="remote access password"
-            placeholder="at least 8 characters"
+            aria-label="원격 접속 비밀번호"
+            placeholder="8자 이상"
             spellCheck={false}
             autoComplete="new-password"
             onChange={(e) => setDraft(e.target.value)}
@@ -169,10 +169,10 @@ function PasswordRow() {
             className={cn(FIELD, "flex-1")}
           />
           <Button size="xs" disabled={draft.trim() === ""} onClick={save}>
-            Save
+            저장
           </Button>
           <Button size="xs" variant="ghost" onClick={cancel}>
-            cancel
+            취소
           </Button>
         </div>
       )}
@@ -181,8 +181,8 @@ function PasswordRow() {
 }
 
 const REMOTE_BIND_OPTIONS = [
-  { value: "localhost", label: "localhost" },
-  { value: "lan", label: "local network" },
+  { value: "localhost", label: "이 컴퓨터만" },
+  { value: "lan", label: "로컬 네트워크" },
 ] as const;
 
 export function RemotePage() {
@@ -209,30 +209,30 @@ export function RemotePage() {
         </div>
         {remote.webBundleMissing && (
           <p className="mt-1.5 text-[11px] leading-relaxed text-copper">
-            the browser bundle is missing — run{" "}
-            <span className="font-mono">npm run build:web</span>
+            브라우저 번들이 없습니다 —{" "}
+            <span className="font-mono">npm run build:web</span>을 실행하세요
           </p>
         )}
       </Panel>
 
       <div className="divide-y divide-line-soft">
         <Row
-          title="Enable remote access"
-          hint="Off by default. A connected client can do everything you can, including editing files and running commands."
+          title="원격 접속 사용"
+          hint="기본적으로 꺼져 있습니다. 연결된 사용자는 파일 편집과 명령 실행을 포함해 이 앱의 모든 기능을 사용할 수 있습니다."
         >
           <Switch
             on={remote.enabled}
             onChange={(next) => void setRemoteEnabled(next)}
-            label="enable remote access"
+            label="원격 접속 사용"
           />
         </Row>
         <div>
           <Row
-            title="Bind address"
-            hint="Which interface the server listens on."
+            title="접속 범위"
+            hint="서버가 연결을 받을 네트워크 범위를 선택합니다."
           >
             <ChoiceCapsule
-              label="bind address"
+              label="접속 범위"
               value={remote.bind}
               options={REMOTE_BIND_OPTIONS}
               onChange={(value) => void setRemoteBind(value)}
@@ -241,16 +241,16 @@ export function RemotePage() {
           </Row>
           {remote.bind === "lan" && (
             <p className="pb-2.5 text-[11px] leading-relaxed text-rose">
-              Anyone on this network with your password or a token link can drive your agent.
-              Plain HTTP, so the connection is not encrypted.
+              같은 네트워크에서 비밀번호나 토큰 링크를 아는 사람은 에이전트를 조작할 수 있습니다.
+              일반 HTTP 연결이므로 암호화되지 않습니다.
             </p>
           )}
         </div>
-        <Row title="Port" hint="A whole number between 1024 and 65535.">
+        <Row title="포트" hint="1024부터 65535 사이의 정수를 입력하세요.">
           <CommitField
             current={String(remote.port)}
             kind="number"
-            label="remote access port"
+            label="원격 접속 포트"
             disabled={false}
             className="w-24"
             onCommit={(raw) => void setRemotePort(Number(raw))}
@@ -258,8 +258,8 @@ export function RemotePage() {
         </Row>
         <PasswordRow />
         <Row
-          title="Access token (fallback)"
-          hint="Still works while a password is set. Regenerating disconnects every client using it."
+          title="접속 토큰(예비)"
+          hint="비밀번호가 설정되어 있어도 사용할 수 있습니다. 토큰을 새로 만들면 기존 토큰으로 연결된 모든 기기가 끊깁니다."
         >
           <div className="flex items-center gap-1.5">
             <span
@@ -274,20 +274,20 @@ export function RemotePage() {
               variant="ghost"
               onClick={() => setRevealed((v) => !v)}
             >
-              {revealed ? "hide" : "reveal"}
+              {revealed ? "숨기기" : "보기"}
             </Button>
             <CopyButton text={remote.token} />
             <Button size="xs" onClick={() => void regenerateRemoteToken()}>
-              Regenerate
+              새로 만들기
             </Button>
           </div>
         </Row>
         <Row
-          title="Connection URL"
+          title="접속 주소"
           hint={
             remote.hasPassword
-              ? "Open this on the other device, then sign in with your password."
-              : "Open this on the other device — the token rides along."
+              ? "다른 기기에서 이 주소를 열고 비밀번호로 로그인하세요."
+              : "다른 기기에서 이 주소를 여세요. 토큰이 주소에 포함됩니다."
           }
         >
           <div className="flex items-center gap-1.5">
@@ -303,8 +303,8 @@ export function RemotePage() {
         </Row>
         {remote.hasPassword && (
           <Row
-            title="Token link (fallback)"
-            hint="Full-access URL with the embedded token, for devices where typing a password is impractical."
+            title="토큰 링크(예비)"
+            hint="비밀번호를 입력하기 어려운 기기에서 사용할 수 있는 전체 권한 주소입니다."
           >
             <div className="flex items-center gap-1.5">
               <span
@@ -324,7 +324,7 @@ export function RemotePage() {
 
       {remote.urls.length > 1 && (
         <div className="space-y-0.5">
-          <Label>Also reachable at</Label>
+          <Label>추가 접속 주소</Label>
           {remote.urls.slice(1).map((url) => (
             <p
               key={url}
@@ -345,17 +345,12 @@ export function RemotePage() {
 }
 
 export function RemoteFooter() {
-  // Load-bearing honesty: installability and offline are secure-context-only, so a plain
-  // http://<lan-ip> origin cannot have them no matter what the manifest says.
   return (
     <p>
-      Over localhost the app is a full browser app. Over your local network it
-      works as a responsive web app, but browsers reserve installability and
-      offline support for secure origins — plain{" "}
-      <span className="font-mono">http://&lt;lan-ip&gt;</span> is not one, so
-      there is no install prompt until you front this with your own HTTPS (a
-      TLS terminator, or Tailscale serve). Changing anything here restarts
-      only the server; sessions keep running.
+      localhost에서는 완전한 브라우저 앱으로 동작합니다. 로컬 네트워크에서는
+      반응형 웹 앱으로 사용할 수 있지만, 설치와 오프라인 기능은 HTTPS 같은
+      보안 연결에서만 제공됩니다. 여기의 설정을 바꾸면 서버만 다시 시작하며
+      세션은 계속 실행됩니다.
     </p>
   );
 }

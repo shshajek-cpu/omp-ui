@@ -323,7 +323,7 @@ export function TerminalTab({ tabId, active }: { tabId: string; active: boolean 
               strokeLinejoin="round"
             />
           </svg>
-          attach images
+          이미지 첨부
         </Button>
       </span>
       <input

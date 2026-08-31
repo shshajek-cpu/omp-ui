@@ -124,15 +124,15 @@ describe("OmpUpdateCard", () => {
       ompUpdate: ompUpdateState({ status: "available", latestVersion: "1.2.0" }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("omp 1.2.0 available");
-    expect(document.body.textContent).toContain("installed: 1.0.0");
-    expect(document.body.textContent).toContain("new sessions will use it");
-    click(buttonWithText("Update now"));
+    expect(document.body.textContent).toContain("omp 1.2.0 사용 가능");
+    expect(document.body.textContent).toContain("설치 버전: 1.0.0");
+    expect(document.body.textContent).toContain("새 세션부터 적용");
+    click(buttonWithText("지금 업데이트"));
     expect(backendMock.downloadOmpUpdate).toHaveBeenCalled();
-    click(buttonWithText("Later"));
+    click(buttonWithText("나중에"));
     expect(backendMock.dismissOmpUpdate).toHaveBeenCalledWith("1.2.0", true);
 
-    click(document.body.querySelector<HTMLButtonElement>('[aria-label="dismiss omp 1.2.0 offer"]')!);
+    click(document.body.querySelector<HTMLButtonElement>('[aria-label="omp 1.2.0 알림 닫기"]')!);
     expect(backendMock.dismissOmpUpdate).toHaveBeenLastCalledWith("1.2.0", true);
   });
 
@@ -146,14 +146,14 @@ describe("OmpUpdateCard", () => {
       }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("omp is not installed");
-    expect(document.body.textContent?.toLowerCase()).not.toContain("update");
-    click(buttonWithText("Install"));
+    expect(document.body.textContent).toContain("omp가 설치되지 않았습니다");
+    expect(document.body.textContent).not.toContain("업데이트");
+    click(buttonWithText("설치"));
     expect(backendMock.downloadOmpUpdate).toHaveBeenCalled();
-    click(buttonWithText("Later"));
+    click(buttonWithText("나중에"));
     expect(backendMock.dismissOmpUpdate).toHaveBeenCalledWith("1.2.0", true);
 
-    click(document.body.querySelector<HTMLButtonElement>('[aria-label="dismiss omp 1.2.0 offer"]')!);
+    click(document.body.querySelector<HTMLButtonElement>('[aria-label="omp 1.2.0 알림 닫기"]')!);
     expect(backendMock.dismissOmpUpdate).toHaveBeenLastCalledWith("1.2.0", true);
   });
 
@@ -162,7 +162,7 @@ describe("OmpUpdateCard", () => {
       ompUpdate: ompUpdateState({ status: "downloading", latestVersion: "1.2.0", progress: 42 }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("Installing omp 1.2.0");
+    expect(document.body.textContent).toContain("omp 1.2.0 설치 중");
     expect(document.body.textContent).toContain("42%");
   });
 
@@ -171,9 +171,9 @@ describe("OmpUpdateCard", () => {
       ompUpdate: ompUpdateState({ status: "installed", latestVersion: "1.2.0" }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("omp 1.2.0 installed");
-    expect(document.body.textContent).toContain("new sessions");
-    click(buttonWithText("Dismiss"));
+    expect(document.body.textContent).toContain("omp 1.2.0 설치 완료");
+    expect(document.body.textContent).toContain("새 세션부터 적용");
+    click(buttonWithText("닫기"));
     expect(backendMock.dismissOmpUpdate).toHaveBeenCalledWith("1.2.0", false);
   });
 
@@ -184,14 +184,14 @@ describe("OmpUpdateCard", () => {
         ompUpdate: ompUpdateState({ status: "error", error: "failed to download omp 1.2.0: HTTP 500" }),
       });
       renderCard();
-      expect(document.body.textContent).toContain("Install failed");
+      expect(document.body.textContent).toContain("설치 실패");
       expect(document.body.textContent).toContain("HTTP 500");
       act(() => {
         vi.advanceTimersByTime(10_000);
       });
       expect(backendMock.dismissOmpUpdate).not.toHaveBeenCalled();
       expect(document.body.textContent).toContain("HTTP 500");
-      const close = document.body.querySelector<HTMLButtonElement>('button[aria-label="dismiss"]');
+      const close = document.body.querySelector<HTMLButtonElement>('button[aria-label="닫기"]');
       expect(close).not.toBeNull();
       click(close!);
       expect(backendMock.dismissOmpUpdate).toHaveBeenCalledWith("", false);
@@ -205,7 +205,7 @@ describe("OmpUpdateCard", () => {
     try {
       useStore.setState({ ompUpdate: ompUpdateState({ status: "up-to-date" }) });
       renderCard();
-      expect(document.body.textContent).toContain("omp is up to date (1.0.0)");
+      expect(document.body.textContent).toContain("omp가 최신 버전입니다 (1.0.0)");
       act(() => {
         vi.advanceTimersByTime(5000);
       });

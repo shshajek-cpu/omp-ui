@@ -39,10 +39,10 @@ const CONTEXTS: Array<{
   label: string;
   hint: string;
 }> = [
-  { id: "existing", label: "this session", hint: "implement in the same chat" },
-  { id: "compacted", label: "this session, compacted", hint: "compact context, then implement here" },
-  { id: "fresh", label: "fresh session", hint: "a new chat seeded with the plan" },
-  { id: "worktree", label: "worktree session", hint: "a new chat in a dedicated checkout and branch" },
+  { id: "existing", label: "이 세션", hint: "현재 세션에서 구현" },
+  { id: "compacted", label: "이 세션 압축 후", hint: "컨텍스트를 압축한 뒤 여기서 구현" },
+  { id: "fresh", label: "새 세션", hint: "계획을 넣은 새 세션에서 구현" },
+  { id: "worktree", label: "워크트리 세션", hint: "전용 체크아웃과 브랜치에서 새 세션으로 구현" },
 ];
 
 /** Stable empty array so the selector doesn't resubscribe on every store tick. */
@@ -53,15 +53,15 @@ type CompactReviewStep = "review" | "refine" | "setup";
 const KEYWORD_ROWS: ReadonlyArray<{ keyword: MagicKeyword; hint: string }> = [
   {
     keyword: "ultrathink",
-    hint: "Careful multi-step reasoning — leads the prompt; under auto-thinking the turn also jumps to the model's highest level.",
+    hint: "신중한 다단계 추론을 사용합니다. 자동 사고에서는 모델의 최고 수준으로 올립니다.",
   },
   {
     keyword: "orchestrate",
-    hint: "Fan the implementation out to subagents — omp's orchestrate keyword leads the prompt.",
+    hint: "구현을 여러 서브에이전트에 분배합니다.",
   },
   {
     keyword: "workflowz",
-    hint: "Drive the implementation as a deterministic multi-subagent workflow — omp's workflowz keyword leads the prompt.",
+    hint: "결정론적 멀티 에이전트 워크플로로 구현합니다.",
   },
 ];
 
@@ -97,7 +97,7 @@ function DispatchSummary({
 }) {
   return (
     <div className={cn("min-w-0", className)}>
-      <Label>ready to dispatch</Label>
+      <Label>실행 준비</Label>
       <p className="mt-0.5 truncate text-[11px] text-ink-dim">
         {contextLabel}
         {model !== null && <>{" · "}{model.name || model.id}</>}
@@ -128,7 +128,7 @@ function ExecutePlanButton({
       disabled={disabled}
       onClick={onExecute}
     >
-      {checkingOut ? "switching branch…" : `execute in ${contextLabel}`}
+      {checkingOut ? "브랜치 전환 중…" : `${contextLabel}에서 실행`}
     </Button>
   );
 }
@@ -355,11 +355,11 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             <Label>
               {compact
                 ? compactStep === "review"
-                  ? "review plan"
+                  ? "계획 검토"
                   : compactStep === "refine"
-                    ? "request changes"
-                    : "implementation setup"
-                : "plan ready"}
+                    ? "수정 요청"
+                    : "구현 설정"
+                : "계획 준비 완료"}
             </Label>
             <h2 id="plan-review-title" className="mt-1 truncate font-display text-base font-medium text-ink" title={request.title}>
               {request.title}
@@ -369,8 +369,8 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            {planText && (!compact || compactStep === "review") && <CopyButton text={planText} label="copy plan" />}
-            <IconButton label="leave plan pending" onClick={dismiss}>
+            {planText && (!compact || compactStep === "review") && <CopyButton text={planText} label="계획 복사" />}
+            <IconButton label="계획을 보류하고 닫기" onClick={dismiss}>
               <IconClose />
             </IconButton>
           </div>
@@ -389,7 +389,7 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
               // the scroll container and just hands it the leftover height.
               planHtml ? "flex flex-col overflow-hidden" : "overflow-y-auto",
             )}
-            aria-label="proposed plan"
+            aria-label="제안된 계획"
           >
             {(!compact || compactStep === "review") && (
               <div className={cn("plan-review-preview min-h-0 flex-1", planHtml && "flex flex-col")}>
@@ -405,7 +405,7 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                     // access, no forms, no popups, no navigation. srcDoc keeps the
                     // read on the confined plan:read channel rather than a file:// URL.
                     <iframe
-                      title="proposed plan"
+                      title="제안된 계획"
                       sandbox=""
                       srcDoc={prepared.status === "ready" ? prepared.doc : ""}
                       className="min-h-0 w-full flex-1 rounded-md border border-line bg-white"
@@ -415,8 +415,8 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                   <Markdown text={planText} />
                 ) : (
                   <p className="text-sm text-ink-dim">
-                    The plan file could not be read. Execute only if you know what it contains —
-                    otherwise refine and let the agent rewrite it.
+                    계획 파일을 읽지 못했습니다. 내용을 알고 있을 때만 실행하세요.
+                    그렇지 않으면 수정을 요청해 에이전트가 다시 작성하도록 하세요.
                   </p>
                 )}
               </div>
@@ -426,11 +426,11 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             <div className={cn("plan-review-refine mt-6 border-t border-line pt-4", planHtml && "shrink-0")}>
               <div className="flex items-baseline justify-between gap-3">
                 <div>
-                  <Label>send it back</Label>
-                  <p className="mt-1 text-xs text-ink-dim">Describe what the planner should revise.</p>
+                  <Label>수정 요청</Label>
+                  <p className="mt-1 text-xs text-ink-dim">계획자가 무엇을 고쳐야 하는지 설명하세요.</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1.5">
-                  <span className="text-[10px] text-ink-faint">Enter to refine · Shift+Enter for a line break</span>
+                  <span className="text-[10px] text-ink-faint">Enter: 수정 요청 · Shift+Enter: 줄바꿈</span>
                   <AttachmentButton disabled={false} onClick={() => imagePicker.current?.click()} />
                 </div>
               </div>
@@ -441,13 +441,13 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                       <span key={i} className="group/att relative">
                         <img
                           src={`data:${image.mimeType};base64,${image.data}`}
-                          alt={`change note ${i + 1}`}
+                          alt={`수정 참고 이미지 ${i + 1}`}
                           title={image.mimeType}
                           className="size-12 rounded border border-line-strong bg-sunken object-cover"
                         />
                         <span className="absolute -right-1 -top-1 opacity-0 transition-opacity group-hover/att:opacity-100 focus-within:opacity-100">
                           <IconButton
-                            label={`remove change note ${i + 1}`}
+                            label={`수정 참고 이미지 ${i + 1} 제거`}
                             tone="rose"
                             onClick={() => dropImage(i)}
                             className="size-4 rounded-full border border-line-strong bg-overlay"
@@ -458,14 +458,14 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                       </span>
                     ))}
                     <Label className="ml-0.5">
-                      {images.length} attachment{images.length === 1 ? "" : "s"}
+                      첨부 {images.length}개
                     </Label>
                   </div>
                 )}
                 <textarea
                   rows={3}
                   value={changes}
-                  placeholder="What should change before implementation?"
+                  placeholder="구현 전에 무엇을 바꿔야 하나요?"
                   spellCheck={false}
                   onChange={(e) => setChanges(e.target.value)}
                   onKeyDown={onKeyDown}
@@ -490,16 +490,16 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
           )}
 
           {(!compact || compactStep === "setup") && (
-          <aside className="plan-review-setup min-h-0 overflow-y-auto border-l border-line bg-sunken/70 px-4 py-4" aria-label="implementation setup">
+          <aside className="plan-review-setup min-h-0 overflow-y-auto border-l border-line bg-sunken/70 px-4 py-4" aria-label="구현 설정">
             <div className="mb-4">
-              <Label>implementation setup</Label>
+              <Label>구현 설정</Label>
               <p className="mt-1 text-xs leading-relaxed text-ink-dim">
-                Choose the context and working tree the implementer receives.
+                구현 에이전트가 받을 컨텍스트와 작업 트리를 선택하세요.
               </p>
             </div>
 
             <fieldset>
-              <legend className="text-[11px] font-medium text-ink">Session</legend>
+              <legend className="text-[11px] font-medium text-ink">세션</legend>
               <div className="mt-2 space-y-1.5">
                 {CONTEXTS.map((option, index) => {
                   const active = context === option.id;
@@ -511,7 +511,7 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                       disabled={option.id === "worktree" && !branch.isRepo}
                       title={
                         option.id === "worktree" && !branch.isRepo
-                          ? "the project isn't a git repo"
+                          ? "이 프로젝트는 Git 저장소가 아닙니다"
                           : undefined
                       }
                       onClick={() => {
@@ -555,9 +555,9 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                         </span>
                         <span className="mt-0.5 block text-[11px] leading-snug text-ink-faint">
                           {option.id === "fresh" && sourceWorktree !== null
-                            ? "a new chat seeded with the plan, in this session's worktree"
+                            ? "이 세션의 워크트리에 계획을 넣은 새 세션"
                             : option.id === "worktree" && sourceWorktree !== null
-                              ? "this session's worktree, or a new checkout and branch"
+                              ? "현재 워크트리를 재사용하거나 새 체크아웃과 브랜치를 만듭니다"
                               : option.hint}
                         </span>
                       </span>
@@ -568,52 +568,52 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             </fieldset>
 
             <fieldset className="mt-5 border-t border-line pt-4">
-              <legend className="text-[11px] font-medium text-ink">Model</legend>
+              <legend className="text-[11px] font-medium text-ink">모델</legend>
               <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
-                Staged for the session that receives the implementation — nothing changes until execute.
+                구현을 받을 세션에 적용할 설정입니다. 실행할 때까지 현재 세션은 바뀌지 않습니다.
               </p>
 
-              <span className="mt-3 block text-[10px] text-ink-faint">model</span>
+              <span className="mt-3 block text-[10px] text-ink-faint">모델</span>
               {availableModels.length === 0 ? (
                 <button
                   type="button"
                   disabled
-                  title="no models available"
+                  title="사용 가능한 모델 없음"
                   className="mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-line bg-void px-2 py-1.5 font-mono text-[11px] text-ink hover:border-line-strong"
                 >
-                  {stagedModel === null ? "session default" : stagedModel.name || stagedModel.id}
+                  {stagedModel === null ? "세션 기본값" : stagedModel.name || stagedModel.id}
                 </button>
               ) : (
                 <button
                   type="button"
                   title={
                     stagedModel === null
-                      ? "the session keeps its current model"
+                      ? "세션의 현재 모델 유지"
                       : `${stagedModel.provider}/${stagedModel.id}`
                   }
                   onClick={() => setPickingModel(true)}
                   className="mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-line bg-void px-2 py-1.5 font-mono text-[11px] text-ink hover:border-line-strong"
                 >
-                  {stagedModel === null ? "session default" : stagedModel.name || stagedModel.id}
+                  {stagedModel === null ? "세션 기본값" : stagedModel.name || stagedModel.id}
                 </button>
               )}
 
               {mainEfforts.length > 0 && (
                 <>
-                  <span className="mt-3 block text-[10px] text-ink-faint">thinking</span>
+                  <span className="mt-3 block text-[10px] text-ink-faint">사고 수준</span>
                   <span ref={mainLevelAnchor} className="relative flex">
                     <button
                       type="button"
-                      title="the session's thinking level for the implementation"
+                      title="구현 세션의 사고 수준"
                       onClick={() => setLevelMenu((m) => (m === "main" ? null : "main"))}
                       className="mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-line bg-void px-2 py-1.5 font-mono text-[11px] text-ink hover:border-line-strong"
                     >
-                      {stagedThinking ?? "think —"}
+                      {stagedThinking ?? "사고 —"}
                     </button>
                     {levelMenu === "main" && (
                       <div className="animate-rise edge-lit absolute left-0 top-full z-20 mt-1 flex w-32 flex-col rounded-md border border-line-strong bg-overlay p-1">
                         <span className="px-1.5 pb-1 pt-0.5">
-                          <Label>thinking</Label>
+                          <Label>사고 수준</Label>
                         </span>
                         {mainEfforts.map((effort) => (
                           <button
@@ -639,22 +639,22 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
 
               <div className="mt-3 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <span className="block text-[11px] font-medium text-ink">Advisor</span>
+                  <span className="block text-[11px] font-medium text-ink">어드바이저</span>
                   <span className="mt-0.5 block text-[10px] leading-snug text-ink-faint">
-                    A change restarts a same-session implementation at execute time.
+                    설정을 바꾸면 같은 세션에서 구현할 때 에이전트를 다시 시작합니다.
                   </span>
                 </div>
-                <Switch on={stagedAdvisor} onChange={setStagedAdvisor} label="advisor for the implementation" />
+                <Switch on={stagedAdvisor} onChange={setStagedAdvisor} label="구현 어드바이저" />
               </div>
 
               {stagedAdvisor && (
                 <>
-                  <span className="mt-3 block text-[10px] text-ink-faint">advisor model</span>
+                  <span className="mt-3 block text-[10px] text-ink-faint">어드바이저 모델</span>
                   {availableModels.length === 0 ? (
                     <button
                       type="button"
                       disabled
-                      title="no models available"
+                      title="사용 가능한 모델 없음"
                       className="mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-line bg-void px-2 py-1.5 font-mono text-[11px] text-ink hover:border-line-strong"
                     >
                       {effectiveAdvisor === null
@@ -678,11 +678,11 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
 
               {stagedAdvisor && advisorSplit !== null && advisorEfforts.length > 0 && (
                 <>
-                  <span className="mt-3 block text-[10px] text-ink-faint">advisor thinking</span>
+                  <span className="mt-3 block text-[10px] text-ink-faint">어드바이저 사고 수준</span>
                   <span ref={advisorLevelAnchor} className="relative flex">
                     <button
                       type="button"
-                      title="the advisor's thinking level for the implementation"
+                      title="구현에 사용할 어드바이저 사고 수준"
                       onClick={() => setLevelMenu((m) => (m === "advisor" ? null : "advisor"))}
                       className="mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-line bg-void px-2 py-1.5 font-mono text-[11px] text-ink hover:border-line-strong"
                     >
@@ -691,7 +691,7 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                     {levelMenu === "advisor" && (
                       <div className="animate-rise edge-lit absolute left-0 top-full z-20 mt-1 flex w-32 flex-col rounded-md border border-line-strong bg-overlay p-1">
                         <span className="px-1.5 pb-1 pt-0.5">
-                          <Label>advisor thinking</Label>
+                          <Label>어드바이저 사고 수준</Label>
                         </span>
                         {advisorSplit?.level !== undefined && (
                           <button
@@ -701,9 +701,9 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                               setStagedAdvisorModel(advisorSplit!.model);
                             }}
                             className="rounded px-1.5 py-0.5 text-left text-[11px] text-ink-faint hover:bg-hover"
-                            title="return to omp's default thinking level for this model"
+                            title="이 모델의 omp 기본 사고 수준으로 되돌리기"
                           >
-                            default —
+                            기본값 —
                           </button>
                         )}
                         {advisorEfforts.map((effort) => (
@@ -738,15 +738,15 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
               )}
             {context === "worktree" && worktreeSel !== null && projectCwd !== undefined && (
               <fieldset className="mt-5 border-t border-line pt-4">
-                <legend className="text-[11px] font-medium text-ink">Worktree</legend>
+                <legend className="text-[11px] font-medium text-ink">워크트리</legend>
                 {reusingWorktree && sourceWorktree !== null ? (
                   <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
-                    This is this session's worktree branch — the implementation reuses this
-                    checkout in place. Change the branch to cut a fresh checkout instead.
+                    현재 세션의 워크트리 브랜치를 그대로 재사용합니다.
+                    새 체크아웃을 만들려면 브랜치를 바꾸세요.
                   </p>
                 ) : (
                   <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
-                    The implementation runs in a dedicated checkout under the app's worktrees root; the project's working tree is untouched.
+                    앱의 워크트리 폴더 아래 전용 체크아웃에서 구현하므로 프로젝트 작업 트리는 그대로 유지됩니다.
                   </p>
                 )}
                 <div className="mt-3 rounded-lg border border-line bg-raised/70 p-3">
@@ -771,9 +771,9 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             )}
 
             <fieldset className="mt-5 border-t border-line pt-4">
-              <legend className="text-[11px] font-medium text-ink">Magic keywords</legend>
+              <legend className="text-[11px] font-medium text-ink">매직 키워드</legend>
               <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
-                Armed words lead the implementation prompt, in this order — omp appends each one's hidden notice.
+                켠 키워드는 아래 순서로 구현 프롬프트 앞에 붙습니다.
               </p>
               <div className="mt-3 space-y-3">
                 {KEYWORD_ROWS.map(({ keyword, hint }) => {
@@ -787,7 +787,7 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
                         <KeywordLabel keyword={keyword} />
                         <span className="mt-0.5 block text-[10px] leading-snug text-ink-faint">{hint}</span>
                       </div>
-                      <Switch on={armed} onChange={setArmed} label={`${keyword} the implementation`} />
+                      <Switch on={armed} onChange={setArmed} label={`구현에 ${keyword} 사용`} />
                     </div>
                   );
                 })}
@@ -797,15 +797,15 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             {advisorConfigured && (
               <div className="mt-5 flex items-start justify-between gap-3 border-t border-line pt-4">
                 <div className="min-w-0">
-                  <span className="block text-[11px] font-medium text-ink">Address advisor concerns</span>
+                  <span className="block text-[11px] font-medium text-ink">어드바이저 의견 반영</span>
                   <span className="mt-0.5 block text-[10px] leading-snug text-ink-faint">
-                    Fold the advisor's plan review into the implementation prompt.
+                    어드바이저의 계획 검토 의견을 구현 프롬프트에 포함합니다.
                   </span>
                 </div>
                 <Switch
                   on={addressAdvisor}
                   onChange={setAddressAdvisor}
-                  label="address advisor concerns in the implementation prompt"
+                  label="구현 프롬프트에 어드바이저 의견 반영"
                 />
               </div>
             )}
@@ -829,22 +829,22 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
             <div className="plan-review-action-buttons ml-auto flex shrink-0 items-center gap-2">
               {compactStep === "review" ? (
                 <>
-                  <Button title="Leave the plan pending — the agent stays paused until you answer here" variant="ghost" onClick={dismiss}>
-                    not now
+                  <Button title="계획을 보류합니다. 여기서 응답할 때까지 에이전트는 일시정지됩니다." variant="ghost" onClick={dismiss}>
+                    나중에
                   </Button>
-                  <Button onClick={() => setCompactStep("refine")}>refine</Button>
+                  <Button onClick={() => setCompactStep("refine")}>수정 요청</Button>
                   <Button variant="solid" tone="signal" onClick={() => setCompactStep("setup")}>
-                    execute…
+                    실행…
                   </Button>
                 </>
               ) : compactStep === "refine" ? (
                 <>
-                  <Button variant="ghost" onClick={() => setCompactStep("review")}>back to plan</Button>
-                  <Button variant="solid" tone="signal" onClick={() => void refine()}>send changes</Button>
+                  <Button variant="ghost" onClick={() => setCompactStep("review")}>계획으로 돌아가기</Button>
+                  <Button variant="solid" tone="signal" onClick={() => void refine()}>수정 내용 보내기</Button>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" onClick={() => setCompactStep("review")}>back to plan</Button>
+                  <Button variant="ghost" onClick={() => setCompactStep("review")}>계획으로 돌아가기</Button>
                   <ExecutePlanButton
                     contextLabel={contextLabel}
                     checkingOut={branch.checkingOut}
@@ -866,8 +866,8 @@ export function PlanReview({ tabId, fill = false }: { tabId: string; fill?: bool
               branch={dispatchBranch}
             />
             <div className="flex shrink-0 items-center gap-2">
-              <Button title="Leave the plan pending — the agent stays paused until you answer here" variant="ghost" onClick={dismiss}>not now</Button>
-              <Button onClick={() => void refine()}>refine</Button>
+              <Button title="계획을 보류합니다. 여기서 응답할 때까지 에이전트는 일시정지됩니다." variant="ghost" onClick={dismiss}>나중에</Button>
+              <Button onClick={() => void refine()}>수정 요청</Button>
               <ExecutePlanButton
                 contextLabel={contextLabel}
                 checkingOut={branch.checkingOut}

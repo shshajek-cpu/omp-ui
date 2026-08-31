@@ -91,7 +91,7 @@ afterEach(() => {
 
 describe("PlanCard mermaid diagrams (issue #285)", () => {
   const planFrame = (): HTMLIFrameElement | null =>
-    document.body.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    document.body.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
 
   it("renders a mermaid block inside the guardrailed document once opened", async () => {
     // The card is collapsed by default: the iframe mounts only after the

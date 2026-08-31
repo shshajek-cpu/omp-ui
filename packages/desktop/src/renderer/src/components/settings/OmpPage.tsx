@@ -34,8 +34,8 @@ export function OmpPage({
   if (load.status === "loading") {
     return (
       <Empty
-        title="Reading omp configuration…"
-        hint="Values, layers, and enum members come from omp's own config CLI."
+        title="omp 설정을 읽는 중…"
+        hint="값, 설정 계층, 선택 항목은 omp 설정 명령에서 직접 읽습니다."
       />
     );
   }
@@ -54,16 +54,16 @@ export function OmpPage({
     const missing = failure === OMP_MISSING;
     return (
       <Empty
-        title="Could not read omp's configuration"
+        title="omp 설정을 읽지 못했습니다"
         hint={
           missing
-            ? "omp is not installed, so there is nothing to configure yet."
+            ? "omp가 설치되지 않아 아직 설정할 항목이 없습니다."
             : (failure ?? undefined)
         }
         action={
           <div className="flex items-center gap-2">
             <Button size="xs" onClick={retry}>
-              retry
+              다시 시도
             </Button>
             {missing && (
               <Button
@@ -71,7 +71,7 @@ export function OmpPage({
                 variant="ghost"
                 onClick={() => openSettings("updates")}
               >
-                install omp from the Updates page
+                업데이트 화면에서 omp 설치
               </Button>
             )}
           </div>
@@ -118,7 +118,7 @@ export function OmpPage({
     <div className="pb-1.5">
       {projectCwd === null && (
         <p className="px-4 pt-3 text-[11px] text-ink-faint">
-          No session focused — showing omp&apos;s global configuration.
+          선택한 세션이 없어 omp 전역 설정을 표시합니다.
         </p>
       )}
       {writeError !== null && (
@@ -130,7 +130,7 @@ export function OmpPage({
       {rolesEntry !== undefined && (
         <section className="px-4 pt-3">
           <div className="flex items-center gap-2">
-            <Label>Model roles</Label>
+            <Label>모델 역할</Label>
             {layerBadge(rolesEntry.layer)}
           </div>
           {rolesEntry.description !== "" && (
@@ -151,8 +151,8 @@ export function OmpPage({
                       : ""
                   }
                   kind="text"
-                  label={`model role ${role}`}
-                  placeholder="model[:level] — blank = unset"
+                  label={`모델 역할 ${role}`}
+                  placeholder="model[:level] — 비워두면 설정 해제"
                   disabled={pendingKey === OMP_MODEL_ROLES_KEY}
                   className="flex-1"
                   onCommit={(raw) => commitRole(role, raw)}
@@ -199,14 +199,14 @@ export function OmpPage({
 
       <div className="mt-1 flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         <p className="text-[11px] text-ink-faint">
-          MCP servers resolve per project from native and translated tool configs (issue #36);
-          the global list applies to every project.
+          MCP 서버는 네이티브 및 변환된 도구 설정을 바탕으로 프로젝트별로 결정됩니다.
+          전역 목록은 모든 프로젝트에 적용됩니다.
         </p>
         <div className="flex items-center gap-2">
           <Button
             size="xs"
             disabled={!mcpReady}
-            title={mcpReady ? undefined : "focus a session tab first — the manager pins to it"}
+            title={mcpReady ? undefined : "먼저 세션 탭을 선택하세요. 관리자가 해당 세션에 연결됩니다."}
             onClick={() => {
               if (tab === undefined || scopeCwd === undefined) return;
               // One modal at a time: stacked Escape listeners would close both.
@@ -214,10 +214,10 @@ export function OmpPage({
               openMcpManager(scopeCwd, tab.tabId);
             }}
           >
-            MCP servers…
+            MCP 서버…
           </Button>
           <Button size="xs" onClick={() => { closeSettings(); openMcpManager(null); }}>
-            Global MCP servers…
+            전역 MCP 서버…
           </Button>
         </div>
       </div>
@@ -231,14 +231,13 @@ export function OmpFooter({ agentDir, anyLive }: FooterContext) {
   // comments in config.yml do not survive an edit from here.
   return (
     <p>
-      Writes go to omp&apos;s global config (
-      <span className="font-mono">{agentDir ?? "…"}/config.yml</span>); a
-      project&apos;s <span className="font-mono">.omp/config.yml</span> still
-      wins and is shown as <span className="font-mono">project</span>. omp
-      binds model roles and the advisor at process start — changes take effect
-      on the next session spawn.
-      {anyLive && " Restart a session from its MCP panel to apply now."} omp
-      regenerates its YAML on write, so comments in config.yml are dropped.
+      변경 내용은 omp 전역 설정(
+      <span className="font-mono">{agentDir ?? "…"}/config.yml</span>)에 기록됩니다.
+      프로젝트의 <span className="font-mono">.omp/config.yml</span>이 우선하며
+      이 경우 <span className="font-mono">project</span>로 표시됩니다. omp는 프로세스
+      시작 시 모델 역할과 어드바이저 설정을 불러오므로 다음 세션부터 적용됩니다.
+      {anyLive && " 지금 적용하려면 해당 세션의 MCP 화면에서 다시 시작하세요."} omp는
+      설정을 쓸 때 YAML을 다시 만들므로 config.yml의 주석은 제거됩니다.
     </p>
   );
 }

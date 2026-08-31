@@ -2,9 +2,9 @@ import { cn } from "../lib/cn";
 import { useStore } from "../store";
 import { ChoiceCapsule } from "./ui";
 
-const BUILD_TITLE = "build mode — working-tree writes and state-changing commands are allowed.";
+const BUILD_TITLE = "빌드 모드 — 작업 트리 쓰기와 상태 변경 명령을 허용합니다.";
 const PLAN_TITLE =
-  "plan mode: read-only exploration — a plan is drafted and reviewed only when you ask";
+  "계획 모드 — 읽기 전용으로 조사하며, 요청할 때만 계획을 작성하고 검토합니다.";
 
 export function BuildPlanControl({
   tabId,
@@ -35,19 +35,19 @@ export function BuildPlanControl({
 
   return (
     <ChoiceCapsule
-      label="session mode"
+      label="세션 모드"
       value={planEnabled ? "plan" : "build"}
       options={modes.map((mode) => {
         const target = mode === "plan";
         const alternate = mode !== defaultAgentMode;
         return {
           value: mode,
-          label: mode,
+          label: mode === "plan" ? "계획" : "빌드",
           disabled: disabled || (target && unavailable !== undefined),
           title: target
             ? unavailable === undefined
               ? PLAN_TITLE
-              : `plan mode unavailable: ${unavailable}`
+              : `계획 모드를 사용할 수 없습니다: ${unavailable}`
             : BUILD_TITLE,
           className: sheet ? "flex-1 justify-center" : "text-[11px]",
           selectedClassName: alternate ? "bg-iris-wash text-iris" : "bg-hover text-ink",

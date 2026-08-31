@@ -105,7 +105,7 @@ export function CommandPalette() {
         if (s.live === "missing") continue;
         out.push({
           id: `session:${s.tabId}`,
-          group: "Sessions",
+          group: "세션",
           name: s.title,
           desc: group.project.name,
           dot: LIVE_TONE[s.live],
@@ -117,37 +117,37 @@ export function CommandPalette() {
     for (const group of state?.projects ?? []) {
       out.push({
         id: `new:${group.project.path}`,
-        group: "Projects",
-        name: `New session in ${group.project.name}`,
+        group: "프로젝트",
+        name: `${group.project.name}에 새 세션`,
         desc: group.project.path,
         run: () => void newSession(group.project.path),
       });
     }
     out.push({
       id: "add-project",
-      group: "Projects",
-      name: "Add project…",
-      desc: "pick a directory to track",
+      group: "프로젝트",
+      name: "프로젝트 추가…",
+      desc: "관리할 폴더 선택",
       run: () => openProjectPicker(),
     });
 
     const tab = activeTabId === null ? undefined : tabs.find((t) => t.tabId === activeTabId);
     if (tab) {
-      const title = findRecord(state, tab.tabId)?.title ?? "this session";
+      const title = findRecord(state, tab.tabId)?.title ?? "이 세션";
       const other = tab.mode === "pty" ? "rpc-ui" : "pty";
       out.push(
         {
           id: "session:terminate",
-          group: "Session",
-          name: "Terminate agent",
-          desc: `${title} — the session stays resumable`,
+          group: "세션",
+          name: "에이전트 종료",
+          desc: `${title} — 나중에 다시 시작할 수 있습니다`,
           run: () => void terminate(tab.tabId),
         },
         {
           id: "session:mode",
-          group: "Session",
-          name: `Switch to ${other === "pty" ? "terminal" : "native"} mode`,
-          desc: `${title} — restarts the process`,
+          group: "세션",
+          name: `${other === "pty" ? "터미널" : "네이티브"} 모드로 전환`,
+          desc: `${title} — 프로세스를 다시 시작합니다`,
           run: () => void switchMode(tab.tabId, other),
         },
       );
@@ -157,9 +157,9 @@ export function CommandPalette() {
       if (scopeCwd !== undefined) {
         out.push({
           id: "session:mcp",
-          group: "Session",
-          name: "MCP servers…",
-          desc: "inspect and toggle MCP servers for this session's working tree",
+          group: "세션",
+          name: "MCP 서버…",
+          desc: "이 세션의 작업 트리에 연결된 MCP 서버 확인 및 전환",
           run: () => openMcpManager(scopeCwd, tab.tabId),
         });
       }
@@ -167,23 +167,23 @@ export function CommandPalette() {
 
     out.push({
       id: "app:check-updates",
-      group: "App",
-      name: "Check for updates",
-      desc: "look for a newer omp-ui release",
+      group: "앱",
+      name: "업데이트 확인",
+      desc: "새 omp-ui 릴리스 확인",
       run: () => void checkAppUpdate(),
     });
     out.push({
       id: "omp:check-updates",
-      group: "App",
-      name: "Check for omp updates",
-      desc: "look for a newer omp release",
+      group: "앱",
+      name: "omp 업데이트 확인",
+      desc: "새 omp 릴리스 확인",
       run: () => void checkOmpUpdate(),
     });
     out.push({
       id: "app:settings",
-      group: "App",
-      name: "Settings…",
-      desc: "appearance, updates, and omp configuration",
+      group: "앱",
+      name: "설정…",
+      desc: "모양, 업데이트, omp 설정",
       hint: "mod+,",
       run: () => openSettings(),
     });
@@ -261,7 +261,7 @@ export function CommandPalette() {
           ref={inputRef}
           value={query}
           spellCheck={false}
-          placeholder="Search sessions, projects, actions…"
+          placeholder="세션, 프로젝트, 동작 검색…"
           onChange={(e) => {
             setQuery(e.target.value);
           }}
@@ -273,7 +273,7 @@ export function CommandPalette() {
 
       <PaletteList>
         {results.length === 0 && (
-          <PaletteEmpty title="Nothing matches" hint="Try fewer letters — matching is fuzzy, not exact." />
+          <PaletteEmpty title="검색 결과 없음" hint="검색어를 줄여보세요. 일부만 일치해도 찾을 수 있습니다." />
         )}
         {results.map(({ action, hits }, i) => {
           const header = action.group === lastGroup ? null : action.group;
@@ -328,13 +328,13 @@ export function CommandPalette() {
 
       <div className="flex items-center gap-3 border-t border-line px-3.5 py-2 text-[10px] text-ink-faint">
         <span className="font-mono">{formatHotkey("arrowup")}{formatHotkey("arrowdown")}</span>
-        <span>navigate</span>
+        <span>이동</span>
         <span className="font-mono">{formatHotkey("enter")}</span>
-        <span>run</span>
+        <span>실행</span>
         <span className="font-mono">Ctrl+N</span>
         <span>/</span>
         <span className="font-mono">Ctrl+P</span>
-        <span>also move</span>
+        <span>항목 이동</span>
       </div>
     </Modal>
   );

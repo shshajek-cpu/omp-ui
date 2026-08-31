@@ -24,6 +24,13 @@ export interface FontFamily {
 
 export const FONT_FAMILIES: readonly FontFamily[] = [
   {
+    id: "pretendard",
+    label: "프리텐다드",
+    display: '"Pretendard Variable", ui-sans-serif, system-ui, sans-serif',
+    sans: '"Pretendard Variable", ui-sans-serif, system-ui, sans-serif',
+    mono: '"JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace',
+  },
+  {
     id: "default",
     label: "Default",
     display: '"Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif',
@@ -39,7 +46,7 @@ export const FONT_FAMILIES: readonly FontFamily[] = [
   },
 ];
 
-export const DEFAULT_FONT_FAMILY_ID = "default";
+export const DEFAULT_FONT_FAMILY_ID = "pretendard";
 
 /**
  * Mirror of the store's `fontFamilyId`. The renderer needs the family before

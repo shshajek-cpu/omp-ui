@@ -25,28 +25,28 @@ export function AppUpdateRestartAction({ size }: { size?: "xs" }) {
   return (
     <>
       <Button size={size} variant="solid" onClick={() => void restart()}>
-        Restart now
+        지금 다시 시작
       </Button>
       {confirming && (
         <ConfirmDialog
-          kicker="Live sessions"
-          title="Restart omp-ui now?"
+          kicker="실행 중인 세션"
+          title="지금 omp-ui를 다시 시작할까요?"
           tone="copper"
           onClose={() => setConfirming(false)}
           width="w-[28rem]"
           actions={
             <>
               <Button variant="ghost" onClick={() => setConfirming(false)}>
-                Cancel
+                취소
               </Button>
               <Button variant="solid" tone="copper" onClick={() => void restart(true)}>
-                Restart and stop sessions
+                세션을 중단하고 다시 시작
               </Button>
             </>
           }
         >
           <p className="text-sm leading-relaxed text-ink-dim">
-            One or more sessions are still live. Restarting will stop their agents and apply the update.
+            하나 이상의 세션이 실행 중입니다. 다시 시작하면 에이전트를 중단하고 업데이트를 적용합니다.
           </p>
         </ConfirmDialog>
       )}
@@ -72,24 +72,24 @@ export function AppUpdateCard() {
   if (status === "available") {
     const primary =
       format === "unknown"
-        ? { label: "View release", run: () => void openAppUpdateReleaseNotes() }
+        ? { label: "릴리스 보기", run: () => void openAppUpdateReleaseNotes() }
         : {
-            label: format === "appimage" || format === "nsis" || format === "maczip" ? "Update" : "Download",
+            label: format === "appimage" || format === "nsis" || format === "maczip" ? "업데이트" : "다운로드",
             run: () => void downloadAppUpdate(),
           };
     body = (
       <>
-        <p className="text-sm font-medium text-ink">omp-ui {version} available</p>
-        <p className="mt-0.5 text-xs text-ink-dim">installed: {currentVersion}</p>
+        <p className="text-sm font-medium text-ink">omp-ui {version} 사용 가능</p>
+        <p className="mt-0.5 text-xs text-ink-dim">설치 버전: {currentVersion}</p>
         <div className="mt-3 flex items-center gap-2">
           <Button variant="solid" onClick={primary.run}>
             {primary.label}
           </Button>
           <Button variant="ghost" onClick={() => void openAppUpdateReleaseNotes()}>
-            Release notes
+            릴리스 노트
           </Button>
           <Button variant="ghost" onClick={() => void dismissAppUpdate(version, true)}>
-            Later
+            나중에
           </Button>
         </div>
       </>
@@ -97,7 +97,7 @@ export function AppUpdateCard() {
   } else if (status === "downloading") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">Downloading omp-ui {version}…</p>
+        <p className="text-sm font-medium text-ink">omp-ui {version} 다운로드 중…</p>
         <div className="mt-2.5 h-1 rounded bg-raised">
           {progress === null ? (
             <div className="h-1 w-full animate-pulse rounded bg-iris" />
@@ -113,25 +113,25 @@ export function AppUpdateCard() {
   } else if (status === "installing") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">Applying omp-ui {version}…</p>
+        <p className="text-sm font-medium text-ink">omp-ui {version} 적용 중…</p>
         <div className="mt-2.5 h-1 rounded bg-raised">
           <div className="h-1 w-full animate-pulse rounded bg-iris" />
         </div>
         <p className="mt-2 text-xs text-ink-dim">
           {format === "maczip"
-            ? "macOS is preparing the update. omp-ui will restart automatically; this can take several minutes."
-            : "omp-ui will restart automatically."}
+            ? "macOS가 업데이트를 준비하고 있습니다. omp-ui가 자동으로 다시 시작되며 몇 분 걸릴 수 있습니다."
+            : "omp-ui가 자동으로 다시 시작됩니다."}
         </p>
       </>
     );
   } else if (status === "downloaded" && (format === "appimage" || format === "nsis" || format === "maczip")) {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">omp-ui {version} ready</p>
+        <p className="text-sm font-medium text-ink">omp-ui {version} 준비 완료</p>
         <p className="mt-0.5 text-xs text-ink-dim">
           {installOnQuit
-            ? "will install when you quit — or restart now to apply immediately"
-            : "restart to apply — your sessions keep running until then"}
+            ? "종료할 때 설치합니다. 지금 다시 시작하면 즉시 적용됩니다."
+            : "다시 시작하면 적용됩니다. 그때까지 세션은 계속 실행됩니다."}
         </p>
         <div className="mt-3 flex items-center gap-2">
           <AppUpdateRestartAction />
@@ -139,10 +139,10 @@ export function AppUpdateCard() {
             variant="ghost"
             onClick={() => void setAppUpdateInstallOnQuit(!installOnQuit)}
           >
-            {installOnQuit ? "Undo" : "Install when I quit"}
+            {installOnQuit ? "취소" : "종료할 때 설치"}
           </Button>
           <Button variant="ghost" onClick={() => void dismissAppUpdate(version, false)}>
-            Later
+            나중에
           </Button>
         </div>
       </>
@@ -150,19 +150,19 @@ export function AppUpdateCard() {
   } else if (status === "downloaded") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">Downloaded omp-ui {version}</p>
+        <p className="text-sm font-medium text-ink">omp-ui {version} 다운로드 완료</p>
         <p className="mt-0.5 text-xs text-ink-dim">
-          the installer was opened — finish the install there
+          설치 프로그램이 열렸습니다. 해당 창에서 설치를 마치세요.
         </p>
         <div className="mt-3 flex items-center gap-2">
           <Button variant="solid" onClick={() => void showAppUpdateDownload()}>
-            Show in folder
+            폴더에서 보기
           </Button>
           <Button variant="ghost" onClick={() => void openAppUpdateReleaseNotes()}>
-            Release notes
+            릴리스 노트
           </Button>
           <Button variant="ghost" onClick={() => void dismissAppUpdate(version, false)}>
-            Dismiss
+            닫기
           </Button>
         </div>
       </>
@@ -171,12 +171,12 @@ export function AppUpdateCard() {
     // The shared shell auto-dismisses up-to-date/disabled; errors stay sticky.
     const title =
       status === "up-to-date"
-        ? `omp-ui is up to date (${currentVersion})`
+        ? `omp-ui가 최신 버전입니다 (${currentVersion})`
         : status === "disabled"
-          ? "omp-ui update checks are disabled in this build"
+          ? "이 빌드에서는 omp-ui 업데이트 확인을 사용할 수 없습니다"
           : error === "could not reach GitHub"
-            ? "Update check failed"
-            : "Update failed";
+            ? "업데이트 확인 실패"
+            : "업데이트 실패";
     body = (
       <div className="min-w-0">
         <p className="text-sm font-medium text-ink">{title}</p>
@@ -197,7 +197,7 @@ export function AppUpdateCard() {
 
   return (
     <UpdateCard
-      dismissLabel={offered ? `dismiss omp-ui ${version} update` : onDismiss ? "dismiss" : undefined}
+      dismissLabel={offered ? `omp-ui ${version} 업데이트 닫기` : onDismiss ? "닫기" : undefined}
       onDismiss={onDismiss}
       autoDismissMs={transient ? 5000 : undefined}
     >

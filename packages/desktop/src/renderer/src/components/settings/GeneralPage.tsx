@@ -10,30 +10,30 @@ import { ChoiceCapsule, Switch } from "../ui";
 import { FIELD, Row } from "./rows";
 
 const DEFAULT_SESSION_MODE_OPTIONS = [
-  { value: "rpc-ui", label: "native" },
-  { value: "pty", label: "terminal" },
+  { value: "rpc-ui", label: "네이티브" },
+  { value: "pty", label: "터미널" },
 ] as const;
 const DEFAULT_AGENT_MODE_OPTIONS = [
-  { value: "plan", label: "plan" },
-  { value: "build", label: "build" },
+  { value: "plan", label: "계획" },
+  { value: "build", label: "빌드" },
 ] as const;
 const PLAN_FORMAT_OPTIONS = [
-  { value: "html", label: "html" },
-  { value: "md", label: "markdown" },
+  { value: "html", label: "HTML" },
+  { value: "md", label: "마크다운" },
 ] as const;
 const STALL_ABORT_OPTIONS = [
-  { value: 0, label: "off" },
-  { value: 120, label: "2 min" },
-  { value: 180, label: "3 min" },
-  { value: 300, label: "5 min" },
-  { value: 600, label: "10 min" },
+  { value: 0, label: "사용 안 함" },
+  { value: 120, label: "2분" },
+  { value: 180, label: "3분" },
+  { value: 300, label: "5분" },
+  { value: 600, label: "10분" },
 ] as const;
 const HIBERNATE_IDLE_OPTIONS = [
-  { value: 0, label: "off" },
-  { value: 15, label: "15 min" },
-  { value: 30, label: "30 min" },
-  { value: 60, label: "1 hour" },
-  { value: 240, label: "4 hours" },
+  { value: 0, label: "사용 안 함" },
+  { value: 15, label: "15분" },
+  { value: 30, label: "30분" },
+  { value: 60, label: "1시간" },
+  { value: 240, label: "4시간" },
 ] as const;
 
 /**
@@ -46,32 +46,32 @@ const HIBERNATE_IDLE_OPTIONS = [
  */
 const COMPACTION_METHOD_META: Record<string, { label: string; description: string }> = {
   remote: {
-    label: "OpenAI server compaction",
+    label: "OpenAI 서버 압축",
     description:
-      "Use provider-native OpenAI-compatible server compaction when the active route supports it",
+      "현재 경로가 지원할 때 공급자 고유의 OpenAI 호환 서버 압축을 사용합니다.",
   },
   snapcompact: {
     label: "Snapcompact",
     description:
-      "Archive history onto dense bitmap images the active vision model reads back; no LLM call",
+      "기록을 현재 비전 모델이 다시 읽는 고밀도 비트맵 이미지로 보관합니다. LLM 호출은 없습니다.",
   },
   handoff: {
-    label: "Handoff",
-    description: "Generate a handoff document and continue from it as the compaction summary",
+    label: "인계",
+    description: "인계 문서를 만들고 이를 압축 요약으로 사용해 계속 진행합니다.",
   },
   soft: {
-    label: "Soft compaction",
-    description: "Summarize in place with a compaction model without using server compaction",
+    label: "소프트 압축",
+    description: "서버 압축 없이 압축 모델로 현재 기록을 요약합니다.",
   },
   shake: {
     label: "Shake",
-    description: "Drop recoverable heavy content in place without an LLM call",
+    description: "LLM 호출 없이 복구 가능한 무거운 내용을 현재 기록에서 제거합니다.",
   },
 };
 
 /** Verbatim from the installed omp's `compaction.methodOrder` setting description. */
 const COMPACTION_DEFAULT_DESCRIPTION =
-  "Preferred fallback order for automatic context maintenance; unavailable or failed methods advance to the next choice";
+  "자동 컨텍스트 관리를 위한 기본 대체 순서입니다. 사용할 수 없거나 실패한 방식은 다음 방식으로 넘어갑니다.";
 
 /**
  * One visible row per compaction method, so every method's description is
@@ -94,7 +94,7 @@ function CompactionMethodPicker({
     disabled?: boolean;
   };
   const options: Option[] = [
-    { id: null, label: "omp configured default", description: COMPACTION_DEFAULT_DESCRIPTION },
+    { id: null, label: "omp 설정 기본값", description: COMPACTION_DEFAULT_DESCRIPTION },
   ];
   if (load.status === "loaded") {
     // A persisted method the installed omp no longer publishes: show it,
@@ -103,7 +103,7 @@ function CompactionMethodPicker({
       const meta = COMPACTION_METHOD_META[value];
       options.push({
         id: value,
-        label: `${meta?.label ?? value} (unavailable)`,
+        label: `${meta?.label ?? value} (사용할 수 없음)`,
         description: meta?.description,
         disabled: true,
       });
@@ -121,7 +121,7 @@ function CompactionMethodPicker({
     <div className="flex min-w-0 flex-col gap-2">
       <div
         role="group"
-        aria-label="default compaction method"
+        aria-label="기본 압축 방식"
         className="divide-y divide-line-soft rounded-md border border-line bg-raised"
       >
         {options.map((option) => {
@@ -158,7 +158,7 @@ function CompactionMethodPicker({
       </div>
       {load.status === "failed" && (
         <p className="text-[10px] text-ink-faint">
-          Methods unavailable: {load.message}
+          방식을 불러올 수 없습니다: {load.message}
         </p>
       )}
     </div>
@@ -196,11 +196,11 @@ export function GeneralPage() {
   return (
     <div className="divide-y divide-line-soft px-4">
       <Row
-        title="Default session mode"
-        hint="How a new session opens — an embedded terminal, or the native transcript."
+        title="기본 세션 모드"
+        hint="새 세션을 내장 터미널 또는 네이티브 기록 중 어떤 화면으로 열지 선택합니다."
       >
         <ChoiceCapsule
-          label="default session mode"
+          label="기본 세션 모드"
           value={mode}
           options={DEFAULT_SESSION_MODE_OPTIONS}
           onChange={(value) => void setDefaultMode(value)}
@@ -208,11 +208,11 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Default agent mode"
-        hint="How a new native session starts — read-only Plan, or write-enabled Build."
+        title="기본 에이전트 모드"
+        hint="새 네이티브 세션을 읽기 전용 계획 모드 또는 쓰기 가능한 빌드 모드로 시작합니다."
       >
         <ChoiceCapsule
-          label="default agent mode"
+          label="기본 에이전트 모드"
           value={agentMode}
           options={DEFAULT_AGENT_MODE_OPTIONS}
           onChange={(value) => void setDefaultAgentMode(value)}
@@ -220,8 +220,8 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Default compaction method"
-        hint="Captured by new native sessions. omp configured default removes the override."
+        title="기본 압축 방식"
+        hint="새 네이티브 세션에 저장됩니다. omp 설정 기본값을 고르면 별도 지정을 제거합니다."
         stacked
       >
         <CompactionMethodPicker
@@ -231,11 +231,11 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Plan format"
-        hint="How the agent authors a plan for review — one self-contained HTML document rendered in the review modal, or markdown."
+        title="계획 형식"
+        hint="검토할 계획을 자체 포함 HTML 문서 또는 마크다운 중 어떤 형식으로 작성할지 선택합니다."
       >
         <ChoiceCapsule
-          label="plan format"
+          label="계획 형식"
           value={planFormat}
           options={PLAN_FORMAT_OPTIONS}
           onChange={(value) => void setPlanFormat(value)}
@@ -243,11 +243,11 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Hibernate idle sessions"
-        hint="Stop the agent process of a native session after it has been quiet this long. The tab you are looking at, each project's most recently active session, and terminal tabs are never hibernated. Its transcript stays on disk; resuming the session continues it."
+        title="유휴 세션 최대 절전"
+        hint="네이티브 세션이 이 시간 동안 조용하면 에이전트 프로세스를 종료합니다. 보고 있는 탭, 각 프로젝트의 최근 세션, 터미널 탭은 종료하지 않습니다. 기록은 디스크에 남고 다시 열면 이어집니다."
       >
         <ChoiceCapsule
-          label="hibernate idle sessions"
+          label="유휴 세션 최대 절전"
           value={state?.hibernateIdleMinutes ?? 30}
           options={HIBERNATE_IDLE_OPTIONS}
           onChange={(value) => void setHibernateIdleMinutes(value)}
@@ -255,11 +255,11 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Stream-stall watchdog"
-        hint="Abort a running turn after this much model-stream silence. The clock runs only while a model request is in flight: local tool execution suspends it for as long as the tool runs, and tool completion, compaction, retry backoff, and human answers each restart a full window. The session stays live — stall auto-continue or any prompt resumes it."
+        title="스트림 멈춤 감시"
+        hint="모델 응답 스트림이 이 시간 동안 멈추면 실행 중인 턴을 중단합니다. 로컬 도구가 실행되는 동안에는 시간을 세지 않으며, 도구 완료·압축·재시도·사용자 응답 때마다 시간을 다시 셉니다."
       >
         <ChoiceCapsule
-          label="stall watchdog"
+          label="스트림 멈춤 감시"
           value={state?.streamStallAbortSeconds ?? 180}
           options={STALL_ABORT_OPTIONS}
           onChange={(value) => void setStreamStallAbortSeconds(value)}
@@ -267,61 +267,61 @@ export function GeneralPage() {
         />
       </Row>
       <Row
-        title="Stall auto-continue"
-        hint="When a turn is aborted because the model stream stalled, send a bounded continue prompt (max 2 in a row; any prompt re-arms) so the session resumes instead of sitting idle. The stall diagnostic still appears with this off. Terminal tabs have no prompt channel and are unaffected."
+        title="멈춤 자동 계속"
+        hint="모델 스트림 멈춤으로 턴이 중단되면 제한된 계속 프롬프트를 보내 세션을 재개합니다. 연속 최대 2회이며 터미널 탭에는 적용되지 않습니다."
       >
         <Switch
           on={state?.stallAutoContinue ?? true}
           onChange={(next) => void setStallAutoContinue(next)}
-          label="Stall auto-continue"
+          label="멈춤 자동 계속"
         />
       </Row>
       <Row
-        title="Desktop notifications"
-        hint="Post an OS notification when a background native session needs attention — its turn finished, a plan review is waiting for an answer, or stall auto-continue paused at its cap. The banner appears while the window is unfocused or a different tab is in view; clicking it focuses the window and resurfaces the session. Terminal sessions are not announced, and remote browser clients are unaffected."
+        title="데스크톱 알림"
+        hint="백그라운드 네이티브 세션의 턴이 끝나거나 계획 검토에 응답이 필요할 때 운영체제 알림을 표시합니다."
       >
         <Switch
           on={state?.desktopNotifications ?? true}
           onChange={(next) => void setDesktopNotifications(next)}
-          label="Desktop notifications"
+          label="데스크톱 알림"
         />
       </Row>
       <Row
-        title="Advisor auto-reply"
-        hint="An advisor comment that lands after the turn ends is answered automatically; off leaves it sitting in the transcript."
+        title="어드바이저 자동 응답"
+        hint="턴이 끝난 뒤 도착한 어드바이저 의견에 자동으로 답합니다. 끄면 의견만 기록에 남습니다."
       >
         <Switch
           on={state?.advisorAutoReply ?? true}
           onChange={(next) => void setAdvisorAutoReply(next)}
-          label="Advisor auto-reply"
+          label="어드바이저 자동 응답"
         />
       </Row>
       <Row
-        title="Default advisor"
-        hint="Start new sessions with the advisor running. Projects with a remembered advisor keep their own last-used state."
+        title="기본 어드바이저"
+        hint="새 세션을 어드바이저와 함께 시작합니다. 프로젝트에 저장된 최근 설정이 있으면 그 설정을 우선합니다."
       >
         <Switch
           on={state?.defaultAdvisor === true}
           onChange={(next) => void setDefaultAdvisor(next)}
-          label="Default advisor"
+          label="기본 어드바이저"
         />
       </Row>
       <Row
-        title="Skip the delete confirmation"
-        hint="Deleting a session erases its whole lineage dir; skipping removes the warning."
+        title="삭제 확인 생략"
+        hint="세션 삭제는 전체 계보 폴더를 지웁니다. 이 옵션을 켜면 경고 없이 삭제합니다."
       >
         <Switch
           on={state?.skipDeleteConfirmation === true}
           onChange={(next) => void setSkipDeleteConfirmation(next)}
-          label="Skip the delete confirmation"
+          label="삭제 확인 생략"
         />
       </Row>
       <Row
-        title="Transcript text size"
-        hint="Native transcripts only — the rest of the chrome is an app, not a document."
+        title="기록 글자 크기"
+        hint="네이티브 기록에만 적용합니다."
       >
         <select
-          aria-label="transcript text size"
+          aria-label="기록 글자 크기"
           value={String(scale)}
           onChange={(e) => setTranscriptScale(Number(e.target.value))}
           className={FIELD}
@@ -340,8 +340,7 @@ export function GeneralPage() {
 export function GeneralFooter() {
   return (
     <p>
-      Default session and agent modes apply to new sessions; everything else
-      applies immediately.
+      기본 세션·에이전트 모드는 새 세션부터 적용되며, 나머지 설정은 즉시 적용됩니다.
     </p>
   );
 }

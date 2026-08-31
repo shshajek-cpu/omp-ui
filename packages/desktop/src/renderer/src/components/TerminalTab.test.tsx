@@ -199,7 +199,7 @@ describe("TerminalTab attachment picker", () => {
     const openPicker = vi.spyOn(input, "click");
     act(() => {
       const button = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
-        (candidate) => candidate.textContent?.trim() === "attach images",
+        (candidate) => candidate.textContent?.trim() === "이미지 첨부",
       )!;
       button.click();
     });

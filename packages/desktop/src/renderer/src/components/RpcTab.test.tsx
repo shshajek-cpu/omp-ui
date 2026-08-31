@@ -181,7 +181,7 @@ describe("RpcTab plan-review takeover (issue #277)", () => {
   /** The session composer's prompt box, keyed by its placeholder. */
   const composerBox = () =>
     document.body.querySelector<HTMLTextAreaElement>(
-      'textarea[placeholder^="message the agent"]',
+      'textarea[placeholder^="에이전트에게 메시지"]',
     );
 
   it("takes over the chat-history slot while the review is pending", () => {

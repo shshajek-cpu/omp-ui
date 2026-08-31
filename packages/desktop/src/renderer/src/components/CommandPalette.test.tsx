@@ -72,7 +72,7 @@ describe("CommandPalette close controls", () => {
   it("keeps empty results safe and closes them through the shared engine", () => {
     renderPalette(false);
     typeQuery("zzzzzzzzzz");
-    expect(document.body.textContent).toContain("Nothing matches");
+    expect(document.body.textContent).toContain("검색 결과 없음");
 
     pressPalette("ArrowDown");
     pressPalette("ArrowUp");
@@ -87,7 +87,7 @@ describe("CommandPalette close controls", () => {
 
   it("picks a filtered action with Enter", () => {
     renderPalette(false);
-    typeQuery("Add project");
+    typeQuery("프로젝트 추가");
     pressPalette("Enter");
     expect(useStore.getState().projectPickerOpen).toBe(true);
     expect(document.body.querySelector('[role="dialog"]')).toBeNull();

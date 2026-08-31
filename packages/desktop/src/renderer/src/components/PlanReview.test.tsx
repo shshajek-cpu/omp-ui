@@ -218,9 +218,26 @@ async function until(ok: () => boolean): Promise<void> {
   expect(ok(), "the prepared plan document never settled").toBe(true);
 }
 
+const KOREAN_PLAN_TEXT: Record<string, string> = {
+  "this session": "이 세션",
+  "this session, compacted": "이 세션 압축 후",
+  "compact this session": "이 세션 압축 후",
+  "fresh session": "새 세션",
+  "worktree session": "워크트리 세션",
+  "execute in this session": "이 세션에서 실행",
+  "execute in fresh session": "새 세션에서 실행",
+  "execute in worktree session": "워크트리 세션에서 실행",
+  "not now": "나중에",
+  refine: "수정 요청",
+  "execute…": "실행…",
+  "back to plan": "계획으로 돌아가기",
+  "send changes": "수정 내용 보내기",
+};
+
 const buttonByText = (text: string): HTMLButtonElement => {
+  const visibleText = KOREAN_PLAN_TEXT[text] ?? text;
   const found = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
-    (candidate) => candidate.textContent === text,
+    (candidate) => candidate.textContent === visibleText,
   );
   expect(found).toBeDefined();
   return found!;
@@ -231,8 +248,9 @@ const buttonContainingText = (
   text: string,
   rootEl: ParentNode = document.body,
 ): HTMLButtonElement => {
+  const visibleText = KOREAN_PLAN_TEXT[text] ?? text;
   const found = [...rootEl.querySelectorAll<HTMLButtonElement>("button")].find(
-    (candidate) => candidate.textContent?.includes(text),
+    (candidate) => candidate.textContent?.includes(visibleText),
   );
   expect(found).toBeDefined();
   return found!;
@@ -496,7 +514,7 @@ describe("PlanReview git branch section (issue #25)", () => {
     render();
     await act(async () => {
       if (route === "close") {
-        document.body.querySelector<HTMLButtonElement>('button[aria-label="leave plan pending"]')!.click();
+        document.body.querySelector<HTMLButtonElement>('button[aria-label="계획을 보류하고 닫기"]')!.click();
       } else {
         buttonByText("not now").click();
       }
@@ -528,7 +546,7 @@ describe("PlanReview worktree execution context (issue #313)", () => {
   /** A Session-fieldset context row (aria-pressed, label-led text). */
   const contextRow = (label: string): HTMLButtonElement => {
     const found = [...document.body.querySelectorAll<HTMLButtonElement>("button[aria-pressed]")].find(
-      (candidate) => candidate.textContent?.startsWith(label),
+      (candidate) => candidate.textContent?.startsWith(KOREAN_PLAN_TEXT[label] ?? label),
     );
     expect(found).toBeDefined();
     return found!;
@@ -587,7 +605,7 @@ describe("PlanReview worktree execution context (issue #313)", () => {
     render();
     const row = contextRow("worktree session");
     expect(row.disabled).toBe(true);
-    expect(row.title).toBe("the project isn't a git repo");
+    expect(row.title).toBe("이 프로젝트는 Git 저장소가 아닙니다");
     // The other contexts stay offered and enabled.
     for (const label of ["this session", "fresh session"]) {
       expect(contextRow(label).disabled).toBe(false);
@@ -682,7 +700,7 @@ describe("PlanReview worktree execution context (issue #313)", () => {
     expect(input.value).toBe("omp-ui/planning1");
     // Nothing is cut from a base while the branch matches: the select hides.
     expect(document.body.querySelector("#plan-worktree-base")).toBeNull();
-    expect(document.body.textContent).toContain("reuses this checkout in place");
+    expect(document.body.textContent).toContain("현재 세션의 워크트리 브랜치를 그대로 재사용합니다");
     // The Git-branch fieldset is a project-checkout concern: hidden here.
     expect(document.body.textContent).not.toContain("Git branch");
   });
@@ -706,7 +724,7 @@ describe("PlanReview worktree execution context (issue #313)", () => {
     await act(async () => contextRow("fresh session").click());
 
     // The pinned destination is named: hint and ready-to-dispatch line.
-    expect(document.body.textContent).toContain("in this session's worktree");
+    expect(document.body.textContent).toContain("이 세션의 워크트리에 계획을 넣은 새 세션");
     expect(document.body.textContent).toContain("omp-ui/planning1");
     expect(document.body.textContent).not.toContain("Git branch");
 
@@ -755,7 +773,7 @@ describe("PlanReview refine attachment picker (issue #65)", () => {
   it("offers a paperclip that opens a multi-image picker", () => {
     render();
     const input = imagePicker();
-    const button = document.body.querySelector<HTMLButtonElement>('button[title="attach images"]')!;
+    const button = document.body.querySelector<HTMLButtonElement>('button[title="이미지 첨부"]')!;
     const click = vi.spyOn(input, "click");
 
     expect(button).not.toBeNull();
@@ -769,7 +787,7 @@ describe("PlanReview refine attachment picker (issue #65)", () => {
   it("drops the paste tail from the refine placeholder", () => {
     render();
     const textarea = document.body.querySelector<HTMLTextAreaElement>("textarea")!;
-    expect(textarea.placeholder).toBe("What should change before implementation?");
+    expect(textarea.placeholder).toBe("구현 전에 무엇을 바꿔야 하나요?");
   });
 
   it("adds picked files to the thumbnail strip and removes one", async () => {
@@ -787,16 +805,16 @@ describe("PlanReview refine attachment picker (issue #65)", () => {
     });
 
     expect(clipboardImageMock.readImageFiles).toHaveBeenCalledWith([first, second]);
-    expect(document.body.querySelectorAll('img[alt^="change note "]')).toHaveLength(2);
-    expect(document.body.textContent).toContain("2 attachments");
+    expect(document.body.querySelectorAll('img[alt^="수정 참고 이미지 "]')).toHaveLength(2);
+    expect(document.body.textContent).toContain("첨부 2개");
 
     await act(async () => {
       document.body
-        .querySelector<HTMLButtonElement>('button[aria-label="remove change note 1"]')!
+        .querySelector<HTMLButtonElement>('button[aria-label="수정 참고 이미지 1 제거"]')!
         .click();
     });
-    expect(document.body.querySelectorAll('img[alt^="change note "]')).toHaveLength(1);
-    expect(document.body.textContent).toContain("1 attachment");
+    expect(document.body.querySelectorAll('img[alt^="수정 참고 이미지 "]')).toHaveLength(1);
+    expect(document.body.textContent).toContain("첨부 1개");
   });
 
   it("resets the input immediately so the same file can be picked again", async () => {
@@ -820,7 +838,7 @@ describe("PlanReview refine attachment picker (issue #65)", () => {
 
     expect(clipboardImageMock.readImageFiles).toHaveBeenNthCalledWith(1, [file]);
     expect(clipboardImageMock.readImageFiles).toHaveBeenNthCalledWith(2, [file]);
-    expect(document.body.querySelectorAll('img[alt^="change note "]')).toHaveLength(2);
+    expect(document.body.querySelectorAll('img[alt^="수정 참고 이미지 "]')).toHaveLength(2);
   });
 
   it("surfaces picker rejections as the paste error", async () => {
@@ -838,7 +856,7 @@ describe("PlanReview refine attachment picker (issue #65)", () => {
 
     expect(imagePicker().value).toBe("");
     expect(document.body.textContent).toContain("broken.png could not be read");
-    expect(document.body.querySelectorAll('img[alt^="change note "]')).toHaveLength(0);
+    expect(document.body.querySelectorAll('img[alt^="수정 참고 이미지 "]')).toHaveLength(0);
   });
 
   it("sends picked images with the refine verdict", async () => {
@@ -903,7 +921,7 @@ describe("PlanReview change notes (issue #113)", () => {
       });
     });
     expect(notesBox().value).toBe("");
-    expect(document.body.querySelectorAll('img[alt^="change note "]')).toHaveLength(0);
+    expect(document.body.querySelectorAll('img[alt^="수정 참고 이미지 "]')).toHaveLength(0);
   });
 
   it("keeps the draft when the review is only deferred", async () => {
@@ -928,9 +946,9 @@ describe("PlanReview model + orchestrate staging (issues #95, #96)", () => {
 
     expect(document.body.textContent).toContain("Kimi K3");
     for (const label of [
-      "ultrathink the implementation",
-      "orchestrate the implementation",
-      "workflowz the implementation",
+      "구현에 ultrathink 사용",
+      "구현에 orchestrate 사용",
+      "구현에 workflowz 사용",
     ]) {
       const keywordSwitch = document.body.querySelector<HTMLButtonElement>(
         `button[role="switch"][aria-label="${label}"]`,
@@ -943,7 +961,7 @@ describe("PlanReview model + orchestrate staging (issues #95, #96)", () => {
   it("toggling orchestrate prepends the keyword to the implementation prompt", async () => {
     render();
     const orchestrateSwitch = document.body.querySelector<HTMLButtonElement>(
-      'button[role="switch"][aria-label="orchestrate the implementation"]',
+      'button[role="switch"][aria-label="구현에 orchestrate 사용"]',
     )!;
     await act(async () => orchestrateSwitch.click());
     await act(async () => {
@@ -958,7 +976,7 @@ describe("PlanReview model + orchestrate staging (issues #95, #96)", () => {
 
   it("toggling ultrathink and workflowz prepends both keywords in notice order", async () => {
     render();
-    for (const label of ["ultrathink the implementation", "workflowz the implementation"]) {
+    for (const label of ["구현에 ultrathink 사용", "구현에 workflowz 사용"]) {
       const keywordSwitch = document.body.querySelector<HTMLButtonElement>(
         `button[role="switch"][aria-label="${label}"]`,
       )!;
@@ -1039,7 +1057,7 @@ describe("PlanReview model + orchestrate staging (issues #95, #96)", () => {
 
 describe("PlanReview plan rendering (issue #109)", () => {
   const planFrame = (): HTMLIFrameElement | null =>
-    document.body.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    document.body.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
 
   it("renders the html rendition in an empty-sandbox iframe, markdown suppressed", async () => {
     useStore.setState({
@@ -1066,7 +1084,7 @@ describe("PlanReview plan rendering (issue #109)", () => {
     expect(executeButton()).toBeDefined();
     expect(buttonByText("refine")).toBeDefined();
     expect(buttonByText("not now")).toBeDefined();
-    expect(document.body.textContent).toContain("implementation setup");
+    expect(document.body.textContent).toContain("구현 설정");
   });
 
   it("renders the markdown plan when there is no html rendition", () => {
@@ -1087,7 +1105,7 @@ describe("PlanReview plan rendering (issue #109)", () => {
     render();
 
     expect(planFrame()).toBeNull();
-    expect(document.body.textContent).toContain("The plan file could not be read");
+    expect(document.body.textContent).toContain("계획 파일을 읽지 못했습니다");
   });
 
   it("shows the named failure and raw source instead of the iframe when verification fails (issue #312)", async () => {
@@ -1121,7 +1139,7 @@ describe("PlanReview plan rendering (issue #109)", () => {
 });
 describe("PlanReview mermaid diagrams (issue #285)", () => {
   const planFrame = (): HTMLIFrameElement | null =>
-    document.body.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    document.body.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
 
   it("renders a mermaid block to contained SVG inside the guardrailed document", async () => {
     useStore.setState({
@@ -1153,7 +1171,7 @@ describe("PlanReview mermaid diagrams (issue #285)", () => {
 
 describe("PlanReview code highlighting (issue #319)", () => {
   const planFrame = (): HTMLIFrameElement | null =>
-    document.body.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    document.body.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
 
   it("tokenizes a language-classed block in the guardrailed document", async () => {
     useStore.setState({
@@ -1188,7 +1206,7 @@ describe("PlanReview code highlighting (issue #319)", () => {
 describe("PlanReview compact flow (issue #216)", () => {
   const step = (): HTMLElement => document.body.querySelector<HTMLElement>("[data-plan-review-step]")!;
   const planFrame = (): HTMLIFrameElement | null =>
-    document.body.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    document.body.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
 
   beforeEach(() => {
     setCompact(true);
@@ -1200,7 +1218,7 @@ describe("PlanReview compact flow (issue #216)", () => {
     expect(step().dataset.planReviewStep).toBe("review");
     expect(planFrame()).not.toBeNull();
     expect(document.body.querySelector("textarea")).toBeNull();
-    expect(document.body.querySelector('[aria-label="implementation setup"]')).toBeNull();
+    expect(document.body.querySelector('[aria-label="구현 설정"]')).toBeNull();
   });
 
   it("preserves refinement notes across back navigation and sends only on submit", async () => {
@@ -1224,8 +1242,8 @@ describe("PlanReview compact flow (issue #216)", () => {
     render();
     await act(async () => buttonByText("execute…").click());
     expect(step().dataset.planReviewStep).toBe("setup");
-    expect(document.body.querySelector('[aria-label="implementation setup"]')).not.toBeNull();
-    expect(document.body.querySelector('[aria-label="proposed plan"]')).toBeNull();
+    expect(document.body.querySelector('[aria-label="구현 설정"]')).not.toBeNull();
+    expect(document.body.querySelector('[aria-label="제안된 계획"]')).toBeNull();
     expect(verdictFrame()).toBeUndefined();
     await act(async () => branchOption("new branch").click());
     await typeInto(newNameInput(), "feat/mobile-review");
@@ -1238,7 +1256,7 @@ describe("PlanReview compact flow (issue #216)", () => {
     render();
     await act(async () => {
       if (route === "close") {
-        document.body.querySelector<HTMLButtonElement>('button[aria-label="leave plan pending"]')!.click();
+        document.body.querySelector<HTMLButtonElement>('button[aria-label="계획을 보류하고 닫기"]')!.click();
       } else {
         buttonByText("not now").click();
       }
@@ -1263,7 +1281,7 @@ describe("PlanReview compact flow (issue #216)", () => {
     await typeIntoTextarea(notesBox(), "unsent draft");
     await act(async () => buttonByText("back to plan").click());
     await act(async () => buttonByText("refine").click());
-    await act(async () => document.body.querySelector<HTMLButtonElement>('button[aria-label="leave plan pending"]')!.click());
+    await act(async () => document.body.querySelector<HTMLButtonElement>('button[aria-label="계획을 보류하고 닫기"]')!.click());
     await act(async () => useStore.getState().showPlanReview(TAB));
     expect(step().dataset.planReviewStep).toBe("review");
     await act(async () => buttonByText("refine").click());
@@ -1281,7 +1299,7 @@ describe("PlanReview compact flow (issue #216)", () => {
     expect(document.body.querySelector("[data-plan-review-step]")).toBeNull();
     expect(planFrame()).not.toBeNull();
     expect(document.body.querySelector("textarea")).not.toBeNull();
-    expect(document.body.querySelector('[aria-label="implementation setup"]')).not.toBeNull();
+    expect(document.body.querySelector('[aria-label="구현 설정"]')).not.toBeNull();
     expect(executeButton()).toBeDefined();
   });
   it("keeps compact setup visible for busy-session confirmation", async () => {

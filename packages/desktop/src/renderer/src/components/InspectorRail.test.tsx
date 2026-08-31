@@ -151,18 +151,28 @@ function renderRail(): void {
   act(() => root!.render(<InspectorRail tabId={TAB} />));
 }
 
+const KOREAN_RAIL_LABELS: Record<string, string> = {
+  todos: "할 일",
+  agents: "에이전트",
+  session: "세션",
+  plans: "계획",
+  diffs: "변경",
+};
+
 function button(label: string): HTMLButtonElement | null {
-  return document.body.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`);
+  const visibleLabel = KOREAN_RAIL_LABELS[label] ?? label;
+  return document.body.querySelector<HTMLButtonElement>(`button[aria-label="${visibleLabel}"]`);
 }
 
 /** A feature icon on the strip: aria-label, with any badge count in the title. */
 function railTab(label: string): HTMLButtonElement | null {
+  const visibleLabel = KOREAN_RAIL_LABELS[label] ?? label;
   return (
     [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
       (b) =>
-        b.getAttribute("aria-label") === label ||
-        b.title === label ||
-        b.title.startsWith(`${label} (`),
+        b.getAttribute("aria-label") === visibleLabel ||
+        b.title === visibleLabel ||
+        b.title.startsWith(`${visibleLabel} (`),
     ) ?? null
   );
 }
@@ -202,9 +212,9 @@ describe("desktop InspectorRail", () => {
       expect(button(label)).not.toBeNull();
     }
     expect(button("memory")).toBeNull();
-    expect(button("todos")?.title).toBe("todos (1)");
+    expect(button("todos")?.title).toBe("할 일 (1)");
     expect(button("todos")?.textContent).toBe("1");
-    expect(button("agents")?.title).toBe("agents (1)");
+    expect(button("agents")?.title).toBe("에이전트 (1)");
 
     // Pressing an icon opens just that pane beside the strip.
     act(() => button("todos")!.click());
@@ -384,7 +394,7 @@ describe("desktop InspectorRail", () => {
     });
     useStore.setState({ compactSurface: "inspector", inspectorOpen: true });
     renderRail();
-    expect(document.body.querySelector('[role="dialog"][aria-label="inspector"]')).not.toBeNull();
+    expect(document.body.querySelector('[role="dialog"][aria-label="검사기"]')).not.toBeNull();
     expect(document.body.querySelector('[role="separator"]')).toBeNull();
   });
 });

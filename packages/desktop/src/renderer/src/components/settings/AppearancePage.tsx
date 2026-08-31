@@ -43,7 +43,7 @@ export function AppearancePage() {
             >
               <span className="flex items-center gap-2">
                 <span className="text-xs font-medium text-ink">{t.label}</span>
-                <Chip>{t.dark ? "dark" : "light"}</Chip>
+                <Chip>{t.dark ? "어두움" : "밝음"}</Chip>
               </span>
               {/* Inline styles are the one sanctioned exception here: these
                   swatches paint a theme that is NOT the active one, so the
@@ -62,15 +62,14 @@ export function AppearancePage() {
         })}
       </div>
       <p className="mt-3 text-[11px] text-ink-faint">
-        Every theme keeps mint reserved for agent liveness (ADR-0004).
+        모든 테마는 에이전트 동작 상태를 나타내는 민트색을 유지합니다(ADR-0004).
       </p>
 
       <div className="mt-4 border-t border-line-soft pt-3">
-        <h3 className="text-xs font-medium text-ink">Font family</h3>
+        <h3 className="text-xs font-medium text-ink">글꼴</h3>
         <p className="mt-0.5 text-[11px] leading-relaxed text-ink-faint">
-          Default is the app's own typeface — Bricolage Grotesque, Instrument
-          Sans, and JetBrains Mono. Ubuntu swaps the whole set, code and
-          terminals included.
+          프리텐다드는 한국어와 영문 화면에 적용되며, 코드와 터미널에는
+          JetBrains Mono를 유지합니다.
         </p>
         <div className="mt-2 grid grid-cols-2 gap-2">
           {FONT_FAMILIES.map((f) => {
@@ -79,7 +78,7 @@ export function AppearancePage() {
               <button
                 key={f.id}
                 type="button"
-                aria-label={`${f.label} font family`}
+                aria-label={`${f.label} 글꼴`}
                 aria-pressed={active}
                 onClick={() => void setFontFamilyId(f.id)}
                 className={cn(
@@ -97,7 +96,7 @@ export function AppearancePage() {
                   className="mt-2 block truncate text-base leading-5 text-ink"
                   style={{ fontFamily: f.sans }}
                 >
-                  Aa Bb Cc 0123
+                  가나다 Aa Bb 0123
                 </span>
                 <span
                   className="mt-0.5 block truncate text-[11px] leading-4 text-ink-dim"

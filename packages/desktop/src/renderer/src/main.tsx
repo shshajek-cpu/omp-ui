@@ -12,10 +12,10 @@ import "./style.css";
 function AppCrash({ error }: { error: Error }) {
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-3 bg-void px-8 font-sans text-ink">
-      <h1 className="font-display text-base font-semibold">omp-ui hit a render error</h1>
+      <h1 className="font-display text-base font-semibold">omp-ui 화면을 표시하지 못했습니다</h1>
       <p className="max-w-lg text-center text-sm text-ink-mid">
-        The sessions themselves are unaffected — omp keeps running in the background. Reload to
-        reattach.
+        세션에는 영향이 없습니다. omp는 백그라운드에서 계속 실행 중입니다.
+        새로고침하면 다시 연결합니다.
       </p>
       <pre
         data-selectable
@@ -28,7 +28,7 @@ function AppCrash({ error }: { error: Error }) {
         onClick={() => window.location.reload()}
         className="rounded border border-line-strong bg-overlay px-3 py-1 text-sm text-ink transition-colors hover:bg-hover"
       >
-        reload
+        새로고침
       </button>
     </div>
   );

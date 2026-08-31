@@ -35,7 +35,7 @@ function MemoryBankPath({
         {path}
       </span>
       <Chip tone={exists ? undefined : "copper"}>
-        {exists ? "exists" : "not created"}
+        {exists ? "있음" : "아직 없음"}
       </Chip>
     </div>
   );
@@ -53,9 +53,9 @@ function MemoryOverviewPanel({
   if (projectCwd === null) {
     return (
       <Panel className="px-3 py-2.5">
-        <Label>Resolved memory</Label>
+        <Label>확인된 메모리</Label>
         <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">
-          Focus a session tab to inspect its resolved backend and bank locations.
+          세션 탭을 선택하면 적용 중인 백엔드와 뱅크 위치를 확인할 수 있습니다.
         </p>
       </Panel>
     );
@@ -63,8 +63,8 @@ function MemoryOverviewPanel({
   if (load.status === "idle" || load.status === "loading") {
     return (
       <Panel className="px-3 py-2.5">
-        <Label>Resolved memory</Label>
-        <p className="mt-1 text-[11px] text-ink-faint">Discovering banks…</p>
+        <Label>확인된 메모리</Label>
+        <p className="mt-1 text-[11px] text-ink-faint">메모리 뱅크 확인 중…</p>
       </Panel>
     );
   }
@@ -73,7 +73,7 @@ function MemoryOverviewPanel({
       <Panel className="px-3 py-2.5">
         <div className="flex items-center justify-between gap-3">
           <p className="text-[11px] leading-relaxed text-rose">{load.message}</p>
-          <Button size="xs" onClick={retry}>retry</Button>
+          <Button size="xs" onClick={retry}>다시 시도</Button>
         </div>
       </Panel>
     );
@@ -83,14 +83,14 @@ function MemoryOverviewPanel({
   return (
     <Panel className="space-y-2 px-3 py-2.5">
       <div className="flex flex-wrap items-center gap-1.5">
-        <Label className="mr-auto">Resolved memory</Label>
+        <Label className="mr-auto">확인된 메모리</Label>
         <Chip mono>{overview.backend}</Chip>
         <Chip mono>{overview.scoping}</Chip>
       </div>
       {overview.error !== null && (
         <div className="flex items-center justify-between gap-3 rounded border border-rose-dim/50 bg-rose-wash px-2 py-1.5">
           <p className="text-[11px] leading-relaxed text-rose">{overview.error}</p>
-          <Button size="xs" onClick={retry}>retry</Button>
+          <Button size="xs" onClick={retry}>다시 시도</Button>
         </div>
       )}
       <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-baseline gap-2">
@@ -113,8 +113,8 @@ function MemoryOverviewPanel({
       ) : (
         <p className="text-[10px] leading-relaxed text-ink-faint">
           {overview.scoping === "global"
-            ? "This project uses the global bank."
-            : "No project bank has been discovered yet."}
+            ? "이 프로젝트는 전역 뱅크를 사용합니다."
+            : "아직 프로젝트 뱅크를 찾지 못했습니다."}
         </p>
       )}
     </Panel>
@@ -181,7 +181,7 @@ export function MemoryPage({
     return (
       <div className="space-y-3 px-4 py-3">
         {overviewPanel}
-        <Empty title="Reading memory configuration…" />
+        <Empty title="메모리 설정을 읽는 중…" />
       </div>
     );
   }
@@ -197,14 +197,14 @@ export function MemoryPage({
       <div className="space-y-3 px-4 py-3">
         {overviewPanel}
         <Empty
-          title="Could not read memory configuration"
-          hint={missing ? "omp is not installed, so there is nothing to configure yet." : (failure ?? undefined)}
+          title="메모리 설정을 읽지 못했습니다"
+          hint={missing ? "omp가 설치되지 않아 아직 설정할 항목이 없습니다." : (failure ?? undefined)}
           action={
             <div className="flex items-center gap-2">
-              <Button size="xs" onClick={retry}>retry</Button>
+              <Button size="xs" onClick={retry}>다시 시도</Button>
               {missing && (
                 <Button size="xs" variant="ghost" onClick={() => openSettings("updates")}>
-                  install omp from the Updates page
+                  업데이트 화면에서 omp 설치
                 </Button>
               )}
             </div>
@@ -222,9 +222,9 @@ export function MemoryPage({
   return (
     <div className="space-y-3 px-4 py-3">
       <div>
-        <p className="text-xs font-medium text-ink">Durable recall configuration</p>
+        <p className="text-xs font-medium text-ink">지속형 메모리 설정</p>
         <p className="mt-0.5 text-[11px] leading-relaxed text-ink-faint">
-          Configure what future sessions retain and recall, and inspect the resolved memory banks for the focused project.
+          이후 세션이 보관하고 회상할 내용을 설정하고, 선택한 프로젝트에 적용되는 메모리 뱅크를 확인합니다.
         </p>
       </div>
       {overviewPanel}
@@ -264,11 +264,11 @@ export function MemoryPage({
 export function MemoryFooter({ agentDir }: FooterContext) {
   return (
     <p>
-      Writes go to omp&apos;s global config (
-      <span className="font-mono">{agentDir ?? "…"}/config.yml</span>); a
-      project&apos;s <span className="font-mono">.omp/config.yml</span> can win
-      and is shown as <span className="font-mono">project</span>. Memory
-      configuration applies to sessions started after the change.
+      변경 내용은 omp 전역 설정(
+      <span className="font-mono">{agentDir ?? "…"}/config.yml</span>)에 기록됩니다.
+      프로젝트의 <span className="font-mono">.omp/config.yml</span>이 우선할 수 있으며
+      이 경우 <span className="font-mono">project</span>로 표시됩니다.
+      메모리 설정은 변경 후 시작한 세션부터 적용됩니다.
     </p>
   );
 }

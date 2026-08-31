@@ -17,12 +17,11 @@ type ProviderLoad =
 
 /** How the row labels each source, and how loudly. */
 function sourceChip(row: ProviderKeyStatus): ReactNode {
-  if (row.source === "stored") return <Chip tone="signal">saved here</Chip>;
-  if (row.source === "environment") return <Chip>environment</Chip>;
+  if (row.source === "stored") return <Chip tone="signal">앱에 저장됨</Chip>;
+  if (row.source === "environment") return <Chip>환경 변수</Chip>;
   if (row.source === "login-shell")
-    return <Chip tone="iris">shell profile</Chip>;
-  // Report-only: omp loads project .env files itself, so nothing was injected.
-  if (row.source === "dotenv") return <Chip tone="copper">project .env</Chip>;
+    return <Chip tone="iris">셸 프로필</Chip>;
+  if (row.source === "dotenv") return <Chip tone="copper">프로젝트 .env</Chip>;
   return null;
 }
 
@@ -81,12 +80,12 @@ function ProviderRow({
         <div className="flex shrink-0 items-center gap-1.5">
           {!editing && (
             <Button size="xs" disabled={busy} onClick={() => setEditing(true)}>
-              {row.source === "stored" ? "Replace" : "Add key"}
+              {row.source === "stored" ? "교체" : "키 추가"}
             </Button>
           )}
           {!editing && row.source === "stored" && (
             <Button size="xs" variant="ghost" disabled={busy} onClick={onClear}>
-              remove
+              제거
             </Button>
           )}
         </div>
@@ -100,7 +99,7 @@ function ProviderRow({
             // screen share, and so no password manager offers to autofill it.
             type="password"
             value={draft}
-            aria-label={`${row.label} key`}
+            aria-label={`${row.label} 키`}
             placeholder={row.hint ?? row.env}
             spellCheck={false}
             autoComplete="off"
@@ -124,18 +123,18 @@ function ProviderRow({
             disabled={busy || draft.trim() === ""}
             onClick={save}
           >
-            Save
+            저장
           </Button>
           <Button size="xs" variant="ghost" disabled={busy} onClick={cancel}>
-            cancel
+            취소
           </Button>
         </div>
       )}
 
       {row.shadowsEnvironment && !editing && (
         <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">
-          Overrides the <span className="font-mono">{row.activeEnv}</span> your
-          environment already provides.
+          환경에 이미 설정된 <span className="font-mono">{row.activeEnv}</span> 값을
+          이 키로 덮어씁니다.
         </p>
       )}
     </div>
@@ -180,10 +179,10 @@ export function ProvidersPage({ projectCwd }: { projectCwd: string | null }) {
   };
 
   if (load.status === "loading") {
-    return <Empty title="Reading providers…" />;
+    return <Empty title="제공자 정보를 읽는 중…" />;
   }
   if (load.status === "error") {
-    return <Empty title="Could not read provider keys" hint={load.message} />;
+    return <Empty title="제공자 키를 읽지 못했습니다" hint={load.message} />;
   }
 
   const { providers, encryptionAvailable, backend } = load.snapshot;
@@ -192,8 +191,8 @@ export function ProvidersPage({ projectCwd }: { projectCwd: string | null }) {
     id: ProviderKeyStatus["group"];
     label: string;
   }> = [
-    { id: "models", label: "Model providers" },
-    { id: "search", label: "Web search" },
+    { id: "models", label: "모델 제공자" },
+    { id: "search", label: "웹 검색" },
   ];
 
   return (
@@ -203,20 +202,19 @@ export function ProvidersPage({ projectCwd }: { projectCwd: string | null }) {
           <Dot tone={configured.length > 0 ? "signal" : "copper"} />
           <p className="text-xs font-medium text-ink">
             {configured.length === 0
-              ? "No provider credentials — omp can only offer models that need no key"
-              : `${configured.length} of ${providers.length} providers have a credential`}
+              ? "제공자 인증정보가 없습니다 — 키가 필요 없는 모델만 사용할 수 있습니다"
+              : `제공자 ${providers.length}곳 중 ${configured.length}곳에 인증정보가 있습니다`}
           </p>
         </div>
         {encryptionAvailable ? (
           <p className="mt-1.5 text-[11px] leading-relaxed text-ink-faint">
-            Keys you add are encrypted by your OS credential store (
-            <span className="font-mono">{backend}</span>).
+            추가한 키는 운영체제 인증 저장소(
+            <span className="font-mono">{backend}</span>)로 암호화됩니다.
           </p>
         ) : (
           <p className="mt-1.5 text-[11px] leading-relaxed text-copper">
-            No OS credential store is available here, so keys cannot be saved
-            securely and adding one is refused. Export the variable from your
-            shell profile instead.
+            사용할 수 있는 운영체제 인증 저장소가 없어 키를 안전하게 저장할 수 없습니다.
+            셸 프로필에서 환경 변수로 내보내세요.
           </p>
         )}
       </Panel>
@@ -252,17 +250,13 @@ export function ProvidersPage({ projectCwd }: { projectCwd: string | null }) {
 }
 
 export function ProvidersFooter({ anyLive }: FooterContext) {
-  // Load-bearing: keys bind at process start, and a GUI launch inherits none
-  // of the user's shell exports — the two facts that make this page exist.
   return (
     <p>
-      omp reads credentials from the environment, so omp-ui supplies these to
-      every session it launches — a key added here takes effect on the next
-      session spawn.
-      {anyLive && " Restart a session from its MCP panel to apply now."} Keys
-      already exported by your shell profile are picked up automatically, and
-      a project&apos;s <span className="font-mono">.env</span> is loaded by
-      omp itself, so both are shown here but neither needs re-entering.
+      omp는 환경 변수에서 인증정보를 읽으므로 omp-ui가 실행하는 모든 세션에
+      이 값을 전달합니다. 여기서 추가한 키는 다음 세션부터 적용됩니다.
+      {anyLive && " 지금 적용하려면 세션의 MCP 화면에서 다시 시작하세요."}
+      셸 프로필의 키와 프로젝트 <span className="font-mono">.env</span>는
+      omp가 자동으로 읽으므로 다시 입력할 필요가 없습니다.
     </p>
   );
 }

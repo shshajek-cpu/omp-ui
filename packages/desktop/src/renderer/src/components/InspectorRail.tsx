@@ -152,20 +152,20 @@ function AgentsPane({ tabId }: { tabId: string }) {
 
   return (
     <Section
-      title={`subagents · ${roster.length}`}
+      title={`서브에이전트 · ${roster.length}`}
       action={
-        <IconButton label="refresh subagents" onClick={() => void refreshSubagents(tabId)}>
+        <IconButton label="서브에이전트 새로고침" onClick={() => void refreshSubagents(tabId)}>
           <IconRefresh />
         </IconButton>
       }
     >
       {roster.length === 0 ? (
         <Empty
-          title="No subagents"
-          hint="Delegated agents appear here while they run."
+          title="서브에이전트 없음"
+          hint="위임한 에이전트가 실행되면 여기에 표시됩니다."
           action={
             <Button size="xs" onClick={() => void refreshSubagents(tabId)}>
-              refresh
+              새로고침
             </Button>
           }
         />
@@ -409,9 +409,9 @@ const PLAN_TONE: Record<PlanRecord["status"], Tone> = {
   refined: "neutral",
 };
 const PLAN_LABEL: Record<PlanRecord["status"], string> = {
-  pending: "waiting on you",
-  executed: "executed",
-  refined: "sent back",
+  pending: "응답 대기",
+  executed: "실행됨",
+  refined: "수정 요청됨",
 };
 
 /**
@@ -431,8 +431,8 @@ function PlansPane({ tabId }: { tabId: string }) {
   if (records.length === 0) {
     return (
       <Empty
-        title="No proposed plans"
-        hint="A plan-mode draft appears here once the agent writes it up."
+        title="제안된 계획 없음"
+        hint="에이전트가 계획 모드 초안을 작성하면 여기에 표시됩니다."
       />
     );
   }
@@ -446,7 +446,7 @@ function PlansPane({ tabId }: { tabId: string }) {
             <button
               type="button"
               disabled={!actionable}
-              title={actionable ? "open the plan review" : record.title}
+              title={actionable ? "계획 검토 열기" : record.title}
               onClick={() => showPlanReview(tabId)}
               className="flex w-full items-start gap-1.5 px-2 py-1.5 text-left disabled:hover:bg-transparent enabled:hover:bg-hover"
             >
@@ -464,7 +464,7 @@ function PlansPane({ tabId }: { tabId: string }) {
                     {PLAN_LABEL[record.status]}
                   </Chip>
                   {actionable && deferred && (
-                    <span className="text-[10px] text-ink-faint">paused · not now</span>
+                    <span className="text-[10px] text-ink-faint">일시정지 · 보류</span>
                   )}
                 </span>
               </span>
@@ -472,23 +472,23 @@ function PlansPane({ tabId }: { tabId: string }) {
             {actionable && (
               <div className="flex items-center gap-1 border-t border-line-soft bg-sunken px-2 py-1.5">
                 <Button size="xs" onClick={() => showPlanReview(tabId)}>
-                  review
+                  검토
                 </Button>
                 <Button
                   size="xs"
-                  title="Send the agent back to revise the draft"
+                  title="에이전트에게 초안 수정을 요청합니다"
                   onClick={() => refinePlan(tabId)}
                 >
-                  request changes
+                  수정 요청
                 </Button>
                 <Button
                   size="xs"
                   variant="ghost"
                   className="ml-auto"
-                  title="Leave the plan pending — the agent stays paused until you answer elsewhere"
+                  title="계획을 보류합니다. 다른 곳에서 답할 때까지 에이전트는 일시정지됩니다."
                   onClick={() => deferPlanReview(tabId)}
                 >
-                  not now
+                  나중에
                 </Button>
               </div>
             )}
@@ -614,11 +614,11 @@ function DiffsPane({ tabId }: { tabId: string }) {
 /* -------------------------------------------------------------- the rail */
 
 const TABS: { id: RailTab; label: string }[] = [
-  { id: "todos", label: "todos" },
-  { id: "agents", label: "agents" },
-  { id: "session", label: "session" },
-  { id: "plans", label: "plans" },
-  { id: "diffs", label: "diffs" },
+  { id: "todos", label: "할 일" },
+  { id: "agents", label: "에이전트" },
+  { id: "session", label: "세션" },
+  { id: "plans", label: "계획" },
+  { id: "diffs", label: "변경" },
 ];
 
 export function inspectorBadges(runtime: RpcTabState | undefined): Record<RailTab, number> {
@@ -698,7 +698,7 @@ export function InspectorRail({ tabId }: { tabId: string }) {
 
   if (compact) {
     return (
-      <Sheet open={surface === "inspector"} placement="right" label="inspector" onClose={closeCompactSurface}>
+      <Sheet open={surface === "inspector"} placement="right" label="검사기" onClose={closeCompactSurface}>
         <div className="sticky top-0 z-10 grid grid-cols-5 border-b border-line bg-sunken">
           {TABS.map(({ id, label }) => (
             <button

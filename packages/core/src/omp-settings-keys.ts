@@ -13,10 +13,10 @@ export interface OmpSettingGroup {
 
 /** Memory settings live on their own settings page but share the core allowlist. */
 export const MEMORY_SETTING_GROUP: OmpSettingGroup = {
-  title: "Memory",
+  title: "메모리",
   description:
-    "Mnemopi gives sessions durable recall. per-project-tagged writes project-local " +
-    "and recalls project + global. Backend changes apply to sessions started afterwards.",
+    "Mnemopi는 세션에 지속형 메모리를 제공합니다. per-project-tagged는 프로젝트별로 기록하고 " +
+    "프로젝트와 전역 내용을 함께 불러옵니다. 백엔드 변경은 이후 시작한 세션부터 적용됩니다.",
   keys: [
     "memory.backend",
     "mnemopi.scoping",
@@ -30,7 +30,7 @@ export const MEMORY_SETTING_GROUP: OmpSettingGroup = {
 /** The omp settings the settings surface exposes, grouped for the omp page. */
 export const OMP_SETTING_GROUPS: ReadonlyArray<OmpSettingGroup> = [
   {
-    title: "Advisor",
+    title: "어드바이저",
     keys: [
       "advisor.enabled",
       "advisor.subagents",
@@ -39,7 +39,7 @@ export const OMP_SETTING_GROUPS: ReadonlyArray<OmpSettingGroup> = [
     ],
   },
   {
-    title: "Context",
+    title: "컨텍스트",
     keys: [
       "compaction.enabled",
       "compaction.idleEnabled",
@@ -50,9 +50,9 @@ export const OMP_SETTING_GROUPS: ReadonlyArray<OmpSettingGroup> = [
     ],
   },
   {
-    title: "Providers",
+    title: "제공자",
     description:
-      "OpenRouter’s nitro variant prioritizes throughput. Longer watchdog budgets tolerate quiet reasoning but delay recovery from a dead stream; 0 disables a watchdog.",
+      "OpenRouter의 nitro 변형은 처리량을 우선합니다. 감시 시간을 늘리면 긴 무응답 추론을 허용하지만 멈춘 스트림의 복구가 늦어지며, 0은 감시를 끕니다.",
     keys: [
       "providers.openrouterVariant",
       "providers.streamFirstEventTimeoutSeconds",
@@ -60,7 +60,7 @@ export const OMP_SETTING_GROUPS: ReadonlyArray<OmpSettingGroup> = [
     ],
   },
   {
-    title: "Display",
+    title: "표시",
     keys: [
       "display.showTokenUsage",
       "hideThinkingBlock",

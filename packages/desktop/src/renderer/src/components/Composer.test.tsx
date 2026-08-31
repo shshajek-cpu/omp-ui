@@ -123,13 +123,14 @@ function imagePicker(): HTMLInputElement {
 
 function modeSegments(): HTMLButtonElement[] {
   const group = document.body.querySelector<HTMLElement>(
-    '[role="group"][aria-label="session mode"]',
+    '[role="group"][aria-label="세션 모드"]',
   )!;
   return [...group.querySelectorAll<HTMLButtonElement>("button")];
 }
 
 function modeSegment(name: "build" | "plan"): HTMLButtonElement {
-  return modeSegments().find((button) => button.textContent?.trim() === name)!;
+  const label = name === "build" ? "빌드" : "계획";
+  return modeSegments().find((button) => button.textContent?.trim() === label)!;
 }
 
 
@@ -161,7 +162,7 @@ describe("compact Composer", () => {
   it("sends the idle draft through prompt, clears, and refocuses", async () => {
     seed("ready"); renderComposer();
     const textarea = typeDraft("mobile sentinel");
-    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Send")!;
+    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "보내기")!;
     await act(async () => send.click());
     expect(sendPrompt).toHaveBeenCalledWith(TAB, "mobile sentinel", "prompt", []);
     expect(textarea.value).toBe("");
@@ -172,14 +173,14 @@ describe("compact Composer", () => {
     seed("running"); renderComposer();
     typeDraft("running draft");
     const byText = (text: string) => [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === text)!;
-    expect(byText("Steer")).toBeDefined();
-    expect(byText("Abort")).toBeDefined();
-    act(() => document.body.querySelector<HTMLButtonElement>('button[title="prompt options"]')!.click());
-    await act(async () => byText("Queue").click());
+    expect(byText("개입")).toBeDefined();
+    expect(byText("중단")).toBeDefined();
+    act(() => document.body.querySelector<HTMLButtonElement>('button[title="프롬프트 옵션"]')!.click());
+    await act(async () => byText("대기열에 추가").click());
     expect(sendPrompt).toHaveBeenCalledWith(TAB, "running draft", "follow_up", []);
 
     typeDraft("replace turn");
-    await act(async () => byText("Interrupt-and-send").click());
+    await act(async () => byText("중단 후 보내기").click());
     expect(abortAndPrompt).toHaveBeenCalledWith(TAB, "replace turn", []);
   });
 
@@ -189,13 +190,13 @@ describe("compact Composer", () => {
       rpc: { [TAB]: { ...s.rpc[TAB]!, model: { ...s.rpc[TAB]!.model!, thinking: { efforts: ["low", "medium", "high"] } } } },
     }));
     renderComposer();
-    act(() => document.body.querySelector<HTMLButtonElement>('button[title="prompt options"]')!.click());
+    act(() => document.body.querySelector<HTMLButtonElement>('button[title="프롬프트 옵션"]')!.click());
     const byText = (text: string) => [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === text)!;
     expect(byText("medium").getAttribute("aria-pressed")).toBe("true");
     expect(byText("low").getAttribute("aria-pressed")).toBe("false");
     expect(byText("high").getAttribute("aria-pressed")).toBe("false");
     expect(modeSegment("plan").getAttribute("aria-pressed")).toBe("false");
-    const sheet = document.body.querySelector<HTMLElement>('[aria-label="prompt options"]')!;
+    const sheet = document.body.querySelector<HTMLElement>('[aria-label="프롬프트 옵션"]')!;
     expect(sheet.querySelector(".prompt-options")).not.toBeNull();
     expect(sheet.querySelector(".w-full")?.textContent).toContain("advisor");
   });
@@ -232,12 +233,12 @@ describe("Composer relaunch handoff", () => {
     const textarea = document.body.querySelector<HTMLTextAreaElement>("textarea")!;
     const buttons = [...document.body.querySelectorAll<HTMLButtonElement>("button")];
     const model = document.body.querySelector<HTMLButtonElement>('button[title="model-x"]')!;
-    const thinking = buttons.find((button) => button.title.startsWith("thinking level"))!;
+    const thinking = buttons.find((button) => button.title.startsWith("사고 수준"))!;
     const advisor = buttons.find((button) => button.title.startsWith("advisor off"))!;
     const build = modeSegment("build");
     const plan = modeSegment("plan");
-    const attach = document.body.querySelector<HTMLButtonElement>('button[title="attach images"]')!;
-    const send = buttons.find((button) => button.textContent?.trim() === "send")!;
+    const attach = document.body.querySelector<HTMLButtonElement>('button[title="이미지 첨부"]')!;
+    const send = buttons.find((button) => button.textContent?.trim() === "보내기")!;
     expect([textarea, model, thinking, advisor, build, plan, attach, send].every((el) => el.disabled)).toBe(true);
 
     act(() => useStore.setState((state) => ({
@@ -272,7 +273,7 @@ describe("Composer advisor model palette", () => {
       },
     }));
     renderComposer();
-    act(() => document.body.querySelector<HTMLButtonElement>('button[title="prompt options"]')!.click());
+    act(() => document.body.querySelector<HTMLButtonElement>('button[title="프롬프트 옵션"]')!.click());
     const advisorButton = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
       (button) => button.textContent?.trim() === "Advisor A",
     )!;
@@ -376,7 +377,7 @@ describe("Composer attachment picker", () => {
   it("exposes a compact, multi-image picker control with a 44px hit target", () => {
     seed("ready"); renderComposer();
     const input = imagePicker();
-    const button = document.body.querySelector<HTMLButtonElement>('button[title="attach images"]')!;
+    const button = document.body.querySelector<HTMLButtonElement>('button[title="이미지 첨부"]')!;
     const click = vi.spyOn(input, "click");
 
     expect(input.accept).toBe("image/*");
@@ -404,7 +405,7 @@ describe("Composer attachment picker", () => {
     typeDraft("compare these");
     await act(async () => {
       [...document.body.querySelectorAll<HTMLButtonElement>("button")]
-        .find((button) => button.textContent === "Send")!
+        .find((button) => button.textContent === "보내기")!
         .click();
     });
 
@@ -454,7 +455,7 @@ describe("Composer attachment picker", () => {
     typeDraft("continue without it");
     await act(async () => {
       [...document.body.querySelectorAll<HTMLButtonElement>("button")]
-        .find((button) => button.textContent === "Send")!
+        .find((button) => button.textContent === "보내기")!
         .click();
     });
     expect(sendPrompt).toHaveBeenCalledWith(TAB, "continue without it", "prompt", []);
@@ -463,7 +464,7 @@ describe("Composer attachment picker", () => {
   it("disables picker access for a dead session", () => {
     seed("ready", true); renderComposer();
     expect(imagePicker().disabled).toBe(true);
-    expect(document.body.querySelector<HTMLButtonElement>('button[title="attach images"]')!.disabled).toBe(true);
+    expect(document.body.querySelector<HTMLButtonElement>('button[title="이미지 첨부"]')!.disabled).toBe(true);
   });
 });
 
@@ -497,7 +498,7 @@ describe("Composer action row overflow", () => {
     }));
     renderComposer();
 
-    const row = document.querySelector('button[title="abort the agent (esc)"]')!.parentElement!;
+    const row = document.querySelector('button[title="에이전트 중단 (esc)"]')!.parentElement!;
     const byTitle = (prefix: string): HTMLButtonElement =>
       row.querySelector<HTMLButtonElement>(`button[title^="${prefix}"]`)!;
 
@@ -505,13 +506,13 @@ describe("Composer action row overflow", () => {
     expect(modelCapsule.classList.contains("shrink")).toBe(true);
     expect(modelCapsule.classList.contains("shrink-0")).toBe(false);
     expect(modelCapsule.querySelector("span.truncate")!.classList.contains("min-w-0")).toBe(true);
-    expect(byTitle("thinking level").classList.contains("shrink-0")).toBe(true);
+    expect(byTitle("사고 수준").classList.contains("shrink-0")).toBe(true);
 
-    expect(byTitle("queue this").classList.contains("shrink-0")).toBe(true);
-    expect(byTitle("inject this").classList.contains("shrink-0")).toBe(true);
-    expect(byTitle("abort the agent").classList.contains("shrink-0")).toBe(true);
+    expect(byTitle("현재 턴이 끝난 뒤").classList.contains("shrink-0")).toBe(true);
+    expect(byTitle("실행 중인 턴에 내용 삽입").classList.contains("shrink-0")).toBe(true);
+    expect(byTitle("에이전트 중단").classList.contains("shrink-0")).toBe(true);
 
-    const interrupt = byTitle("abort the current turn");
+    const interrupt = byTitle("현재 턴을 중단하고");
     expect(interrupt.classList.contains("shrink")).toBe(true);
     expect(interrupt.classList.contains("min-w-0")).toBe(true);
     expect(interrupt.querySelector("span.truncate")!.classList.contains("min-w-0")).toBe(true);
@@ -567,7 +568,7 @@ describe("Composer focus treatment", () => {
     // The compact shell's prompt-options control is the only action-row button
     // that survives the ready→running row swap with an empty draft — Send is
     // disabled without a draft and the running row replaces it.
-    const options = document.body.querySelector<HTMLButtonElement>('button[title="prompt options"]')!;
+    const options = document.body.querySelector<HTMLButtonElement>('button[title="프롬프트 옵션"]')!;
     act(() => options.focus());
     expect(document.activeElement).toBe(options);
     setStatus("running"); // unavailable stays false: no re-arm
@@ -610,7 +611,7 @@ describe("Composer BuildPlanControl", () => {
     renderComposer();
     expect(
       modeSegments().map((button) => button.textContent?.trim()),
-    ).toEqual(["plan", "build"]);
+    ).toEqual(["계획", "빌드"]);
   });
 
   it("puts a Build default first and accents alternate Plan when selected (issue #143)", () => {
@@ -629,7 +630,7 @@ describe("Composer BuildPlanControl", () => {
 
     expect(
       modeSegments().map((button) => button.textContent?.trim()),
-    ).toEqual(["build", "plan"]);
+    ).toEqual(["빌드", "계획"]);
     expect(modeSegment("build").className).not.toContain("bg-iris-wash");
 
     act(() => useStore.setState((s) => ({
@@ -726,7 +727,7 @@ describe("Composer BuildPlanControl", () => {
     expect(build.disabled).toBe(false);
     expect(plan.getAttribute("aria-pressed")).toBe("false");
     expect(plan.disabled).toBe(true);
-    expect(plan.title).toBe("plan mode unavailable: no active omp session");
+    expect(plan.title).toBe("계획 모드를 사용할 수 없습니다: no active omp session");
   });
 
   it("shows one canonical plan row in the palette and runs it", () => {
@@ -840,7 +841,7 @@ describe("Composer onPrompt", () => {
     const spy = vi.fn();
     seed("ready"); renderWithPrompt(spy);
     typeDraft("do the thing");
-    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Send")!;
+    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "보내기")!;
     await act(async () => send.click());
     expect(spy).toHaveBeenCalledTimes(1);
     expect(sendPrompt).toHaveBeenCalledTimes(1);
@@ -850,7 +851,7 @@ describe("Composer onPrompt", () => {
     const spy = vi.fn();
     seed("ready"); renderWithPrompt(spy);
     typeDraft("/compact");
-    const run = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Run")!;
+    const run = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "실행")!;
     await act(async () => run.click());
     expect(spy).not.toHaveBeenCalled();
     expect(runSlashCommand).toHaveBeenCalledTimes(1);
@@ -859,7 +860,7 @@ describe("Composer onPrompt", () => {
   it("does not fire for an empty draft", async () => {
     const spy = vi.fn();
     seed("ready"); renderWithPrompt(spy);
-    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Send")!;
+    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "보내기")!;
     await act(async () => send.click());
     expect(spy).not.toHaveBeenCalled();
   });
@@ -906,7 +907,7 @@ describe("RpcTab hero", () => {
     seed("ready");
     desktop(); renderRpcTab();
     typeDraft("ship it");
-    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === "send")!;
+    const send = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === "보내기")!;
     await act(async () => send.click());
     expect(document.body.textContent).not.toContain("What's next");
     expect(sendPrompt).toHaveBeenCalledTimes(1);
@@ -1013,9 +1014,10 @@ describe("worktree conversion through the branch chip (issue #227)", () => {
   }
 
   const chipTrigger = (): HTMLButtonElement => document.body.querySelector<HTMLButtonElement>("button[aria-expanded]")!;
-
-  const buttonByText = (text: string): HTMLButtonElement =>
-    [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === text)!;
+  const buttonByText = (text: string): HTMLButtonElement => {
+    const visibleText = text === "send" ? "보내기" : text;
+    return [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === visibleText)!;
+  };
 
   const flush = async (): Promise<void> => { await act(async () => {}); };
 
@@ -1051,7 +1053,7 @@ describe("worktree conversion through the branch chip (issue #227)", () => {
     expect(sendPrompt).not.toHaveBeenCalled();
     expect(textarea.value).toBe("hello");
     expect(document.body.textContent).toContain("branch already exists");
-    expect(document.body.querySelector('button[aria-label="dismiss worktree error"]')).not.toBeNull();
+    expect(document.body.querySelector('button[aria-label="워크트리 오류 닫기"]')).not.toBeNull();
 
   });
   it("create cuts the worktree now, without a prompt", async () => {
@@ -1079,7 +1081,7 @@ describe("worktree conversion through the branch chip (issue #227)", () => {
     await flush();
     expect(sendPrompt).not.toHaveBeenCalled();
     expect(document.body.textContent).toContain("branch already exists");
-    expect(document.body.querySelector('button[aria-label="dismiss worktree error"]')).not.toBeNull();
+    expect(document.body.querySelector('button[aria-label="워크트리 오류 닫기"]')).not.toBeNull();
     // The worktree selection survives for a fix-and-retry.
     expect(chipTrigger().textContent).toContain("worktree");
   });
@@ -1092,7 +1094,7 @@ describe("worktree conversion through the branch chip (issue #227)", () => {
     await enterWorktreeSection();
     await act(async () => buttonByText("create").click());
     await flush();
-    expect(document.body.textContent).toContain("cutting the worktree…");
+    expect(document.body.textContent).toContain("워크트리를 만드는 중…");
     expect(buttonByText("creating…").disabled).toBe(true);
   });
 

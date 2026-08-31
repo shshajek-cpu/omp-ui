@@ -441,17 +441,17 @@ function ProjectSection({
             );
           })}
           {total === 0 && (
-            <p className="px-3 py-1 text-[11px] text-ink-faint italic">no sessions yet</p>
+            <p className="px-3 py-1 text-[11px] text-ink-faint italic">아직 세션이 없습니다</p>
           )}
           {total > PAGE && (
             <div className="flex items-center gap-2 px-3 pt-1 pb-0.5">
               <span className="font-mono text-[10px] text-ink-faint tabular-nums">
-                showing {shown} of {total}
+                전체 {total}개 중 {shown}개 표시
               </span>
               <span className="ml-auto flex shrink-0 items-center gap-1">
                 {visible > PAGE && shown > PAGE && (
                   <Button size="xs" variant="ghost" onClick={() => setVisible(PAGE)}>
-                    show less
+                    접기
                   </Button>
                 )}
                 {remaining > 0 && (
@@ -459,9 +459,9 @@ function ProjectSection({
                     size="xs"
                     variant="ghost"
                     onClick={() => setVisible(shown + PAGE)}
-                    title={`${remaining} more session${remaining === 1 ? "" : "s"} in ${project.name}`}
+                    title={`${project.name}에 세션 ${remaining}개가 더 있습니다`}
                   >
-                    show {Math.min(PAGE, remaining)} more
+                    {Math.min(PAGE, remaining)}개 더 보기
                   </Button>
                 )}
               </span>
@@ -682,8 +682,8 @@ export function Sidebar() {
                   value={query}
                   spellCheck={false}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="filter sessions…"
-                  aria-label="filter sessions"
+                  placeholder="세션 검색…"
+                  aria-label="세션 검색"
                   className={cn(
                     "min-w-0 flex-1 bg-transparent py-1.5 text-xs text-ink",
                     "placeholder:font-mono placeholder:text-ink-faint focus:outline-none",
@@ -694,14 +694,14 @@ export function Sidebar() {
                     <span className="shrink-0 font-mono text-[10px] text-ink-dim tabular-nums">
                       {matchCount}
                     </span>
-                    <IconButton label="clear filter" onClick={() => setQuery("")} className="size-5">
+                    <IconButton label="검색 지우기" onClick={() => setQuery("")} className="size-5">
                       <IconClose className="size-3.5" />
                     </IconButton>
                   </>
                 )}
               </div>
               {compact && (
-                <IconButton label="add project" onClick={() => { openProjectPicker(); closeCompactSurface(); }} className="size-9 rounded-md border border-line">
+                <IconButton label="프로젝트 추가" onClick={() => { openProjectPicker(); closeCompactSurface(); }} className="size-9 rounded-md border border-line">
                   <IconPlus />
                 </IconButton>
               )}
@@ -713,22 +713,22 @@ export function Sidebar() {
             {groups === null && <SkeletonRows />}
             {groups !== null && groups.length === 0 && (
               <Empty
-                title="No projects yet"
-                hint="Point omp-ui at a repository and every session you start there shows up here."
+                title="아직 프로젝트가 없습니다"
+                hint="프로젝트를 등록하면 그곳에서 시작한 모든 세션이 여기에 표시됩니다."
                 action={
                   <Button variant="solid" onClick={() => { openProjectPicker(); closeCompactSurface(); }}>
-                    Add project
+                    프로젝트 추가
                   </Button>
                 }
               />
             )}
             {groups !== null && groups.length > 0 && filtered.length === 0 && (
               <Empty
-                title={`Nothing matches “${query.trim()}”`}
-                hint="No session title or project name contains that."
+                title={`“${query.trim()}” 검색 결과 없음`}
+                hint="일치하는 세션 제목이나 프로젝트 이름이 없습니다."
                 action={
                   <Button variant="ghost" onClick={() => setQuery("")}>
-                    clear filter
+                    검색 지우기
                   </Button>
                 }
               />
@@ -818,17 +818,17 @@ export function Sidebar() {
         )}
       >
         {/* One gear in both layouts: settings must stay reachable collapsed. */}
-        <IconButton label="settings" onClick={() => { openSettings(); closeCompactSurface(); }}>
+        <IconButton label="설정" onClick={() => { openSettings(); closeCompactSurface(); }}>
           <IconGear />
         </IconButton>
         <span className="flex items-center gap-1.5">
           <Dot tone={totalLive > 0 ? "signal" : "neutral"} />
           <span className="font-mono tabular-nums">{totalLive}</span>
-          {!displayedCollapsed && <span>live</span>}
+          {!displayedCollapsed && <span>실행 중</span>}
         </span>
         {!displayedCollapsed && (
-          <span className="ml-auto font-mono tabular-nums" title="sessions on record">
-            {totalSessions} session{totalSessions === 1 ? "" : "s"}
+          <span className="ml-auto font-mono tabular-nums" title="기록된 세션">
+            세션 {totalSessions}개
           </span>
         )}
       </footer>

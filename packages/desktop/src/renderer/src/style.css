@@ -10,6 +10,7 @@
 @import "@fontsource-variable/bricolage-grotesque/index.css";
 @import "@fontsource-variable/instrument-sans/index.css";
 @import "@fontsource-variable/jetbrains-mono/index.css";
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 /* Ubuntu family (issue #315): static weights matching what the UI actually
    uses — 400 regular, 500 medium, 700 bold (font-semibold maps to 700). No
    font-light exists in the codebase, and italics stay synthesized exactly
@@ -81,11 +82,11 @@
   /* Colour tokens are generated in theme-default.css from theme-sources.json. */
 
   /* ---- Typography ----
-     First-paint fallback for the "default" font family. lib/font-families.ts
-     re-writes the same properties on the document root at boot; its
-     "default" entry must stay in sync with the stacks below. */
-  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+     First-paint fallback for the Korean fork. lib/font-families.ts rewrites
+     the same properties on the document root at boot; its "pretendard" entry
+     must stay in sync with the stacks below. */
+  --font-display: "Pretendard Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Pretendard Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
 
   /* ---- Motion: one easing curve, three durations ---- */

@@ -139,14 +139,14 @@ describe("AppUpdateCard", () => {
       appUpdate: appUpdateState({ status: "available", latestVersion: "1.2.0" }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("omp-ui 1.2.0 available");
-    expect(document.body.textContent).toContain("installed: 1.0.0");
-    buttonWithText("Download");
-    buttonWithText("Release notes");
-    click(buttonWithText("Later"));
+    expect(document.body.textContent).toContain("omp-ui 1.2.0 사용 가능");
+    expect(document.body.textContent).toContain("설치 버전: 1.0.0");
+    buttonWithText("다운로드");
+    buttonWithText("릴리스 노트");
+    click(buttonWithText("나중에"));
     expect(backendMock.dismissAppUpdate).toHaveBeenCalledWith("1.2.0", true);
 
-    click(document.body.querySelector<HTMLButtonElement>('[aria-label="dismiss omp-ui 1.2.0 update"]')!);
+    click(document.body.querySelector<HTMLButtonElement>('[aria-label="omp-ui 1.2.0 업데이트 닫기"]')!);
     expect(backendMock.dismissAppUpdate).toHaveBeenLastCalledWith("1.2.0", true);
   });
 
@@ -155,7 +155,7 @@ describe("AppUpdateCard", () => {
       appUpdate: appUpdateState({ status: "available", latestVersion: "1.2.0", format }),
     });
     renderCard();
-    buttonWithText("Update");
+    buttonWithText("업데이트");
   });
 
   it.each(["appimage", "nsis", "maczip"] as const)(
@@ -170,7 +170,7 @@ describe("AppUpdateCard", () => {
         }),
       });
       renderCard();
-      expect(document.body.textContent).toContain("Downloading omp-ui 1.2.0");
+      expect(document.body.textContent).toContain("omp-ui 1.2.0 다운로드 중");
       expect(document.body.textContent).toContain("42%");
     },
   );
@@ -185,12 +185,12 @@ describe("AppUpdateCard", () => {
     });
     renderCard();
 
-    expect(document.body.textContent).toContain("Applying omp-ui 1.2.0");
-    expect(document.body.textContent).toContain("this can take several minutes");
+    expect(document.body.textContent).toContain("omp-ui 1.2.0 적용 중");
+    expect(document.body.textContent).toContain("몇 분 걸릴 수 있습니다");
     expect(document.body.querySelector(".animate-pulse")).not.toBeNull();
-    expect(buttonWithTextOrNull("Restart now")).toBeNull();
-    expect(buttonWithTextOrNull("Install when I quit")).toBeNull();
-    expect(buttonWithTextOrNull("Later")).toBeNull();
+    expect(buttonWithTextOrNull("지금 다시 시작")).toBeNull();
+    expect(buttonWithTextOrNull("종료할 때 설치")).toBeNull();
+    expect(buttonWithTextOrNull("나중에")).toBeNull();
   });
 
   it.each(["appimage", "nsis", "maczip"] as const)(
@@ -204,15 +204,15 @@ describe("AppUpdateCard", () => {
         }),
       });
       renderCard();
-      expect(document.body.textContent).toContain("omp-ui 1.2.0 ready");
+      expect(document.body.textContent).toContain("omp-ui 1.2.0 준비 완료");
 
-      click(buttonWithText("Restart now"));
+      click(buttonWithText("지금 다시 시작"));
       expect(backendMock.restartForAppUpdate).toHaveBeenCalled();
 
-      click(buttonWithText("Install when I quit"));
+      click(buttonWithText("종료할 때 설치"));
       expect(backendMock.setAppUpdateInstallOnQuit).toHaveBeenCalledWith(true);
 
-      click(buttonWithText("Later"));
+      click(buttonWithText("나중에"));
       expect(backendMock.dismissAppUpdate).toHaveBeenCalledWith("1.2.0", false);
     },
   );
@@ -230,11 +230,11 @@ describe("AppUpdateCard", () => {
     });
     renderCard();
 
-    await act(async () => buttonWithText("Restart now").click());
+    await act(async () => buttonWithText("지금 다시 시작").click());
     expect(document.body.querySelector('[role="alertdialog"]')?.textContent).toContain(
-      "sessions are still live",
+      "하나 이상의 세션이 실행 중입니다",
     );
-    await act(async () => buttonWithText("Restart and stop sessions").click());
+    await act(async () => buttonWithText("세션을 중단하고 다시 시작").click());
     expect(backendMock.restartForAppUpdate).toHaveBeenNthCalledWith(1, false);
     expect(backendMock.restartForAppUpdate).toHaveBeenNthCalledWith(2, true);
   });
@@ -251,8 +251,8 @@ describe("AppUpdateCard", () => {
         }),
       });
       renderCard();
-      expect(document.body.textContent).toContain("will install when you quit");
-      click(buttonWithText("Undo"));
+      expect(document.body.textContent).toContain("종료할 때 설치합니다");
+      click(buttonWithText("취소"));
       expect(backendMock.setAppUpdateInstallOnQuit).toHaveBeenCalledWith(false);
     },
   );
@@ -266,8 +266,8 @@ describe("AppUpdateCard", () => {
       }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("Downloaded omp-ui 1.2.0");
-    click(buttonWithText("Show in folder"));
+    expect(document.body.textContent).toContain("omp-ui 1.2.0 다운로드 완료");
+    click(buttonWithText("폴더에서 보기"));
     expect(backendMock.showAppUpdateDownload).toHaveBeenCalled();
   });
 
@@ -276,7 +276,7 @@ describe("AppUpdateCard", () => {
     try {
       useStore.setState({ appUpdate: appUpdateState({ status: "up-to-date" }) });
       renderCard();
-      expect(document.body.textContent).toContain("omp-ui is up to date (1.0.0)");
+      expect(document.body.textContent).toContain("omp-ui가 최신 버전입니다 (1.0.0)");
       act(() => {
         vi.advanceTimersByTime(5000);
       });
@@ -294,7 +294,7 @@ describe("AppUpdateCard", () => {
       }),
     });
     renderCard();
-    expect(document.body.textContent).toContain("Update failed");
-    expect(document.body.textContent).not.toContain("Download failed");
+    expect(document.body.textContent).toContain("업데이트 실패");
+    expect(document.body.textContent).not.toContain("다운로드 실패");
   });
 });

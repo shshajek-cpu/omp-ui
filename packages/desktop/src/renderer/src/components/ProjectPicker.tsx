@@ -122,8 +122,8 @@ export function ProjectPicker() {
           ref={inputRef}
           value={query}
           spellCheck={false}
-          placeholder="~/path/to/project"
-          aria-label="project directory path"
+          placeholder="C:\\프로젝트\\경로 또는 /프로젝트/경로"
+          aria-label="프로젝트 폴더 경로"
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKey}
           className="min-w-0 flex-1 bg-transparent font-mono text-sm text-ink placeholder:text-ink-faint focus:outline-none"
@@ -133,12 +133,12 @@ export function ProjectPicker() {
 
       <PaletteList>
         {browseError === "invalid" && (
-          <PaletteEmpty title="Type a path" hint="Start with ~/ or an absolute /path." />
+          <PaletteEmpty title="경로를 입력하세요" hint="절대 경로를 입력하세요." />
         )}
-        {browseError === "missing" && <PaletteEmpty title="No such directory" hint={parentPath} />}
-        {browseError === "denied" && <PaletteEmpty title="Permission denied" hint={parentPath} />}
+        {browseError === "missing" && <PaletteEmpty title="폴더를 찾을 수 없습니다" hint={parentPath} />}
+        {browseError === "denied" && <PaletteEmpty title="접근 권한이 없습니다" hint={parentPath} />}
         {browseError === null && rows.length === 0 && (
-          <PaletteEmpty title="No matching directories" hint="Enter adds the path shown below." />
+          <PaletteEmpty title="일치하는 폴더가 없습니다" hint="Enter를 누르면 아래 경로를 추가합니다." />
         )}
         {rows.map((row, i) => (
           <button
@@ -180,19 +180,19 @@ export function ProjectPicker() {
       <div className="border-t border-line px-3.5 py-2">
         <div className="flex items-center gap-3">
           <p className="min-w-0 flex-1 truncate text-[11px] text-ink-dim">
-            will add: <span className="font-mono text-ink-mid">{resolvedPath || "—"}</span>
+            추가할 경로: <span className="font-mono text-ink-mid">{resolvedPath || "—"}</span>
           </p>
-          <Button variant="solid" disabled={!resolvedPath || browseError !== null} onClick={() => submit(resolvedPath)}>Add project</Button>
+          <Button variant="solid" disabled={!resolvedPath || browseError !== null} onClick={() => submit(resolvedPath)}>프로젝트 추가</Button>
         </div>
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-ink-faint">
           <span className="font-mono">{formatHotkey("arrowup")}{formatHotkey("arrowdown")}</span>
-          <span>navigate</span>
+          <span>이동</span>
           <span className="font-mono">{formatHotkey("enter")}</span>
-          <span>open/add</span>
+          <span>열기/추가</span>
           <span className="font-mono">{formatHotkey("tab")}</span>
-          <span>open</span>
+          <span>열기</span>
           <span className="font-mono">{formatHotkey("mod+enter")}</span>
-          <span>add typed path</span>
+          <span>입력한 경로 추가</span>
         </div>
       </div>
     </Modal>

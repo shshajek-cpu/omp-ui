@@ -7,11 +7,11 @@ export function AboutPage({ load }: { load: Load }) {
   // These facts are otherwise only visible inside update cards that are
   // usually hidden — that is this page's whole reason to exist.
   const rows: Array<[string, string]> = [
-    ["omp-ui version", appUpdate.currentVersion ?? "—"],
-    ["omp version", ompUpdate.installedVersion ?? "—"],
-    ["omp path", ompUpdate.installPath ?? "—"],
+    ["omp-ui 버전", appUpdate.currentVersion ?? "—"],
+    ["omp 버전", ompUpdate.installedVersion ?? "—"],
+    ["omp 경로", ompUpdate.installPath ?? "—"],
     [
-      "omp config dir",
+      "omp 설정 폴더",
       load.status === "loaded" ? (load.snapshot.agentDir ?? "—") : "—",
     ],
   ];

@@ -6,44 +6,44 @@ import { Button, Panel, Switch } from "../ui";
 function appStatusLine(u: AppUpdateState): string {
   switch (u.status) {
     case "available":
-      return `${u.latestVersion ?? "a newer release"} available`;
+      return `${u.latestVersion ?? "새 버전"} 사용 가능`;
     case "downloading":
-      return `downloading ${u.latestVersion ?? ""}…`;
+      return `${u.latestVersion ?? ""} 다운로드 중…`;
     case "downloaded":
-      return `${u.latestVersion ?? "update"} downloaded${u.installOnQuit ? " — installs on quit" : ""}`;
+      return `${u.latestVersion ?? "업데이트"} 다운로드 완료${u.installOnQuit ? " — 종료할 때 설치" : ""}`;
     case "installing":
-      return `applying ${u.latestVersion ?? "update"}…`;
+      return `${u.latestVersion ?? "업데이트"} 적용 중…`;
     case "up-to-date":
-      return "up to date";
+      return "최신 버전";
     case "checking":
-      return "checking…";
+      return "확인 중…";
     case "disabled":
-      return "omp-ui checks disabled in this build — omp binary updates are independent";
+      return "이 빌드에서는 omp-ui 업데이트 확인을 지원하지 않습니다. omp 바이너리 업데이트는 별도입니다.";
     case "error":
-      return u.error ?? "update check failed";
+      return u.error ?? "업데이트 확인 실패";
     default:
-      return "no check has run yet";
+      return "아직 확인하지 않음";
   }
 }
 
 function ompStatusLine(u: OmpUpdateState): string {
   switch (u.status) {
     case "missing":
-      return "not installed";
+      return "설치되지 않음";
     case "available":
-      return `${u.latestVersion ?? "a newer release"} available`;
+      return `${u.latestVersion ?? "새 버전"} 사용 가능`;
     case "downloading":
-      return `installing ${u.latestVersion ?? ""}…`;
+      return `${u.latestVersion ?? ""} 설치 중…`;
     case "installed":
-      return `${u.latestVersion ?? "update"} installed — new sessions use it`;
+      return `${u.latestVersion ?? "업데이트"} 설치 완료 — 새 세션부터 사용`;
     case "up-to-date":
-      return "up to date";
+      return "최신 버전";
     case "checking":
-      return "checking…";
+      return "확인 중…";
     case "error":
-      return u.error ?? "update check failed";
+      return u.error ?? "업데이트 확인 실패";
     default:
-      return "no check has run yet";
+      return "아직 확인하지 않음";
   }
 }
 
@@ -87,7 +87,7 @@ export function UpdatesPage() {
           <div className="min-w-0">
             <p className="text-xs font-medium text-ink">omp-ui</p>
             <p className="mt-0.5 font-mono text-[11px] text-ink-mid tabular-nums">
-              {appUpdate.currentVersion ?? "unversioned build"}
+              {appUpdate.currentVersion ?? "버전 정보 없는 빌드"}
             </p>
             <p className="mt-0.5 text-[11px] text-ink-dim">
               {appStatusLine(appUpdate)}
@@ -105,7 +105,7 @@ export function UpdatesPage() {
                   variant="solid"
                   onClick={() => void openAppUpdateReleaseNotes()}
                 >
-                  View release
+                  릴리스 보기
                 </Button>
               ) : (
                 <Button
@@ -116,8 +116,8 @@ export function UpdatesPage() {
                   {appUpdate.format === "appimage" ||
                   appUpdate.format === "nsis" ||
                   appUpdate.format === "maczip"
-                    ? "Update"
-                    : "Download"}
+                    ? "업데이트"
+                    : "다운로드"}
                 </Button>
               ))}
             {appUpdate.status === "downloaded" &&
@@ -134,8 +134,8 @@ export function UpdatesPage() {
                     }
                   >
                     {appUpdate.installOnQuit
-                      ? "Undo install on quit"
-                      : "Install when I quit"}
+                      ? "종료 시 설치 취소"
+                      : "종료할 때 설치"}
                   </Button>
                 </>
               ) : (
@@ -144,7 +144,7 @@ export function UpdatesPage() {
                   variant="solid"
                   onClick={() => void showAppUpdateDownload()}
                 >
-                  Show in folder
+                  폴더에서 보기
                 </Button>
               ))}
             <Button
@@ -152,25 +152,25 @@ export function UpdatesPage() {
               disabled={appUpdate.status === "installing"}
               onClick={() => void checkAppUpdate()}
             >
-              Check now
+              지금 확인
             </Button>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-xs text-ink-mid">Check on launch</span>
+          <span className="text-xs text-ink-mid">시작할 때 확인</span>
           <Switch
             on={state?.appUpdateCheckOnLaunch ?? true}
             onChange={(next) => void setAppUpdateCheckOnLaunch(next)}
-            label="check for omp-ui updates on launch"
+            label="시작할 때 omp-ui 업데이트 확인"
           />
         </div>
         {typeof state?.dismissedAppUpdateVersion === "string" && (
           <div className="mt-2 flex items-center justify-between gap-3">
             <span className="text-xs text-ink-mid">
-              Dismissed: {state.dismissedAppUpdateVersion}
+              숨김: {state.dismissedAppUpdateVersion}
             </span>
             <Button size="xs" variant="ghost" onClick={reofferApp}>
-              Re-offer
+              다시 표시
             </Button>
           </div>
         )}
@@ -179,9 +179,9 @@ export function UpdatesPage() {
       <Panel className="px-4 py-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-medium text-ink">omp binary</p>
+            <p className="text-xs font-medium text-ink">omp 바이너리</p>
             <p className="mt-0.5 font-mono text-[11px] text-ink-mid tabular-nums">
-              {ompUpdate.installedVersion ?? "not installed"}
+              {ompUpdate.installedVersion ?? "설치되지 않음"}
             </p>
             <p className="mt-0.5 text-[11px] text-ink-dim">
               {ompStatusLine(ompUpdate)}
@@ -198,7 +198,7 @@ export function UpdatesPage() {
                 variant="solid"
                 onClick={() => void downloadOmpUpdate()}
               >
-                Update now
+                지금 업데이트
               </Button>
             )}
             {ompUpdate.status === "missing" && (
@@ -207,29 +207,29 @@ export function UpdatesPage() {
                 variant="solid"
                 onClick={() => void downloadOmpUpdate()}
               >
-                Install
+                설치
               </Button>
             )}
             <Button size="xs" onClick={() => void checkOmpUpdate()}>
-              Check now
+              지금 확인
             </Button>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-xs text-ink-mid">Check on launch</span>
+          <span className="text-xs text-ink-mid">시작할 때 확인</span>
           <Switch
             on={state?.ompUpdateCheckOnLaunch ?? true}
             onChange={(next) => void setOmpUpdateCheckOnLaunch(next)}
-            label="check for omp updates on launch"
+            label="시작할 때 omp 업데이트 확인"
           />
         </div>
         {typeof state?.dismissedOmpUpdateVersion === "string" && (
           <div className="mt-2 flex items-center justify-between gap-3">
             <span className="text-xs text-ink-mid">
-              Dismissed: {state.dismissedOmpUpdateVersion}
+              숨김: {state.dismissedOmpUpdateVersion}
             </span>
             <Button size="xs" variant="ghost" onClick={reofferOmp}>
-              Re-offer
+              다시 표시
             </Button>
           </div>
         )}
@@ -239,7 +239,5 @@ export function UpdatesPage() {
 }
 
 export function UpdatesFooter() {
-  // Auto-download is deliberately absent: both download paths end in an
-  // installer launch or an app restart.
-  return <p>Downloads always need a click.</p>;
+  return <p>다운로드와 설치는 항상 사용자가 눌러야 시작됩니다.</p>;
 }

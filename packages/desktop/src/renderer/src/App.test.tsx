@@ -90,7 +90,7 @@ describe("compact App shell", () => {
     const sessions = document.body.querySelector<HTMLButtonElement>('button .sr-only')?.parentElement as HTMLButtonElement;
     act(() => sessions.click());
     expect(useStore.getState().compactSurface).toBe("sessions");
-    const inspector = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.includes("inspector"))!;
+    const inspector = [...document.body.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.includes("검사기"))!;
     act(() => inspector.click());
     expect(useStore.getState().compactSurface).toBe("inspector");
     act(() => useStore.setState({ activeTabId: "pty" }));
@@ -188,10 +188,10 @@ describe("update restore surface (issue #99)", () => {
     useStore.setState({ tabs: [], activeTabId: null, restoringTabs: true });
     renderApp();
 
-    expect(document.body.textContent).toContain("Restoring sessions");
-    expect(document.body.textContent).not.toContain("Add project");
+    expect(document.body.textContent).toContain("세션을 복원하는 중");
+    expect(document.body.textContent).not.toContain("프로젝트 추가");
 
     act(() => useStore.setState({ restoringTabs: false }));
-    expect(document.body.textContent).toContain("Add project");
+    expect(document.body.textContent).toContain("프로젝트 추가");
   });
 });

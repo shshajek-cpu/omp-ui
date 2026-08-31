@@ -23,12 +23,12 @@ import { findRecord, useStore } from "./store";
 
 /** The shortcuts the chrome actually registers, spelled out for newcomers. */
 const HINTS: [combo: string, what: string][] = [
-  ["mod+k", "command palette"],
-  ["mod+shift+n", "new session in the current project"],
-  ["mod+shift+p", "switch Build / Plan mode"],
-  ["mod+j", "toggle console"],
-  ["mod+f", "search within a session"],
-  ["mod+=", "larger transcript text"],
+  ["mod+k", "명령 팔레트"],
+  ["mod+shift+n", "현재 프로젝트에 새 세션"],
+  ["mod+shift+p", "빌드 / 계획 모드 전환"],
+  ["mod+j", "콘솔 열기/닫기"],
+  ["mod+f", "세션 안에서 검색"],
+  ["mod+=", "기록 글자 크게"],
 ];
 
 // The native overlay rect is composited over the strip's right end; reserve
@@ -198,7 +198,7 @@ function TitleBar() {
 function RestoringSessions() {
   return (
     <div className="ambient flex h-full flex-col items-center justify-center bg-void px-5">
-      <p className="font-display text-sm text-ink-dim">Restoring sessions…</p>
+      <p className="font-display text-sm text-ink-dim">세션을 복원하는 중…</p>
     </div>
   );
 }
@@ -214,18 +214,18 @@ function Welcome() {
           <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">omp-ui</h1>
           <p className="text-balance-tight text-sm leading-relaxed text-ink-dim">
             {hasProjects
-              ? "Pick a session from the sidebar, or start a new one in any tracked project."
-              : "Track a project directory, then run omp agents against it — as a terminal or as a native session."}
+              ? "왼쪽에서 세션을 고르거나 등록한 프로젝트에서 새 세션을 시작하세요."
+              : "프로젝트 폴더를 등록한 뒤 터미널 또는 네이티브 세션으로 omp 에이전트를 실행하세요."}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button variant="solid" onClick={openProjectPicker}>
-            Add project
+            프로젝트 추가
           </Button>
           {hasProjects && (
             <Button variant="ghost" onClick={() => openPalette()}>
-              Open session…
+              세션 열기…
             </Button>
           )}
         </div>
@@ -366,7 +366,7 @@ export default function App() {
 
   const visibleTabs = tabs.filter((t) => !t.hidden);
   const activeTab = tabs.find((tab) => tab.tabId === activeTabId);
-  const activeTitle = activeRecord?.title ?? "projects and sessions";
+  const activeTitle = activeRecord?.title ?? "프로젝트와 세션";
   const badges = activeTab?.mode === "rpc-ui" ? inspectorBadges(activeRuntime) : null;
   const inspectorCount = badges ? badges.todos + badges.agents + badges.plans : 0;
 
@@ -389,7 +389,7 @@ export default function App() {
         >
           <Button variant="ghost" className="h-11 min-w-11 justify-center px-2 text-ink-mid [app-region:no-drag]" onClick={() => showCompactSurface("sessions")}>
             <IconMenu />
-            <span className="sr-only">projects and sessions</span>
+            <span className="sr-only">프로젝트와 세션</span>
           </Button>
           <span className="min-w-0 flex-1 text-center">
             <button type="button" className="max-w-[calc(100%-4rem)] truncate px-2 py-2 text-center font-display text-sm font-semibold [app-region:no-drag]" onClick={() => showCompactSurface("sessions")}>{activeTitle}</button>
@@ -397,7 +397,7 @@ export default function App() {
           {activeTab?.mode === "rpc-ui" ? (
             <Button variant="ghost" className="relative h-11 min-w-11 justify-center px-2 text-ink-mid [app-region:no-drag]" onClick={() => showCompactSurface("inspector")}>
               <IconInspect />
-              <span className="sr-only">inspector</span>
+              <span className="sr-only">검사기</span>
               {inspectorCount > 0 && (
                 <span aria-hidden className="absolute right-1 top-1.5 min-w-3.5 rounded-full bg-copper-wash px-1 text-center font-mono text-[9px] leading-3.5 text-copper">
                   {inspectorCount > 99 ? "99+" : inspectorCount}

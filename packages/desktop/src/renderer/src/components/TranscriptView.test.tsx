@@ -343,7 +343,7 @@ describe("PlanCard (issue #93)", () => {
     expect(disclosure).toBeDefined();
     act(() => disclosure!.click());
 
-    const frame = el.querySelector<HTMLIFrameElement>('iframe[title="proposed plan"]');
+    const frame = el.querySelector<HTMLIFrameElement>('iframe[title="제안된 계획"]');
     expect(frame).not.toBeNull();
     expect(frame!.getAttribute("sandbox")).toBe("");
     // preparePlanDocument is async now (issue #285): flush the effect chain.

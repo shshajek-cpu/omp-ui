@@ -25,17 +25,17 @@ export function OmpUpdateCard() {
   if (status === "available") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">omp {version} available</p>
-        <p className="mt-0.5 text-xs text-ink-dim">installed: {installedVersion}</p>
+        <p className="text-sm font-medium text-ink">omp {version} 사용 가능</p>
+        <p className="mt-0.5 text-xs text-ink-dim">설치 버전: {installedVersion}</p>
         <p className="mt-0.5 text-xs text-ink-dim">
-          new sessions will use it — running sessions keep their version
+          새 세션부터 적용되며 실행 중인 세션은 현재 버전을 유지합니다.
         </p>
         <div className="mt-3 flex items-center gap-2">
           <Button variant="solid" onClick={() => void downloadOmpUpdate()}>
-            Update now
+            지금 업데이트
           </Button>
           <Button variant="ghost" onClick={dismissOfferedVersion}>
-            Later
+            나중에
           </Button>
         </div>
       </>
@@ -44,16 +44,16 @@ export function OmpUpdateCard() {
     // An install offer, not an update — never the word "update" here.
     body = (
       <>
-        <p className="text-sm font-medium text-ink">omp is not installed</p>
+        <p className="text-sm font-medium text-ink">omp가 설치되지 않았습니다</p>
         <p className="mt-0.5 text-xs text-ink-dim">
-          new sessions can&apos;t run until omp-ui installs its managed copy
+          omp-ui가 관리 사본을 설치하기 전에는 새 세션을 실행할 수 없습니다.
         </p>
         <div className="mt-3 flex items-center gap-2">
           <Button variant="solid" onClick={() => void downloadOmpUpdate()}>
-            Install
+            설치
           </Button>
           <Button variant="ghost" onClick={dismissOfferedVersion}>
-            Later
+            나중에
           </Button>
         </div>
       </>
@@ -61,7 +61,7 @@ export function OmpUpdateCard() {
   } else if (status === "downloading") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">Installing omp {version}…</p>
+        <p className="text-sm font-medium text-ink">omp {version} 설치 중…</p>
         <div className="mt-2.5 h-1 rounded bg-raised">
           {progress === null ? (
             <div className="h-1 w-full animate-pulse rounded bg-iris" />
@@ -77,13 +77,13 @@ export function OmpUpdateCard() {
   } else if (status === "installed") {
     body = (
       <>
-        <p className="text-sm font-medium text-ink">omp {version} installed</p>
+        <p className="text-sm font-medium text-ink">omp {version} 설치 완료</p>
         <p className="mt-0.5 text-xs text-ink-dim">
-          new sessions will use it — running sessions are unaffected
+          새 세션부터 적용되며 실행 중인 세션에는 영향이 없습니다.
         </p>
         <div className="mt-3 flex items-center gap-2">
           <Button variant="ghost" onClick={() => void dismissOmpUpdate(version, false)}>
-            Dismiss
+            닫기
           </Button>
         </div>
       </>
@@ -92,10 +92,10 @@ export function OmpUpdateCard() {
     // The shared shell auto-dismisses up-to-date; errors stay sticky.
     const title =
       status === "up-to-date"
-        ? `omp is up to date (${installedVersion})`
+        ? `omp가 최신 버전입니다 (${installedVersion})`
         : error === "could not reach the omp release registry"
-          ? "Update check failed"
-          : "Install failed";
+          ? "업데이트 확인 실패"
+          : "설치 실패";
     body = (
       <div className="min-w-0">
         <p className="text-sm font-medium text-ink">{title}</p>
@@ -116,7 +116,7 @@ export function OmpUpdateCard() {
 
   return (
     <UpdateCard
-      dismissLabel={offered ? `dismiss omp ${version} offer` : onDismiss ? "dismiss" : undefined}
+      dismissLabel={offered ? `omp ${version} 알림 닫기` : onDismiss ? "닫기" : undefined}
       onDismiss={onDismiss}
       autoDismissMs={transient ? 5000 : undefined}
     >

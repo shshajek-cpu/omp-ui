@@ -173,12 +173,28 @@ function seed(updates: {
   });
 }
 
+const KOREAN_SETTINGS_TEXT: Record<string, string> = {
+  html: "HTML",
+  markdown: "마크다운",
+  "30 min": "30분",
+  "1 hour": "1시간",
+  off: "사용 안 함",
+  "3 min": "3분",
+  "5 min": "5분",
+  plan: "계획",
+  build: "빌드",
+  Memory: "메모리",
+  "Set password": "비밀번호 설정",
+  Clear: "지우기",
+};
+
 function buttonWithText(text: string): HTMLButtonElement | null {
-  return (
-    [...document.body.querySelectorAll<HTMLButtonElement>("button")].find(
-      (candidate) => candidate.textContent === text,
-    ) ?? null
+  const visibleText = KOREAN_SETTINGS_TEXT[text] ?? text;
+  const matches = [...document.body.querySelectorAll<HTMLButtonElement>("button")].filter(
+    (candidate) => candidate.textContent === visibleText,
   );
+  const action = matches.find((candidate) => !candidate.hasAttribute("aria-current"));
+  return visibleText === "업데이트" ? action ?? null : action ?? matches[0] ?? null;
 }
 
 function click(el: HTMLElement): void {
@@ -202,12 +218,12 @@ describe("Settings Updates page (issue #89)", () => {
   it("offers only the checks when no update is on the table", async () => {
     seed({});
     await renderSettings();
-    expect(buttonWithText("Download")).toBeNull();
-    expect(buttonWithText("Update")).toBeNull();
-    expect(buttonWithText("View release")).toBeNull();
-    expect(buttonWithText("Restart now")).toBeNull();
-    expect(buttonWithText("Show in folder")).toBeNull();
-    expect(buttonWithText("Update now")).toBeNull();
+    expect(buttonWithText("다운로드")).toBeNull();
+    expect(buttonWithText("업데이트")).toBeNull();
+    expect(buttonWithText("릴리스 보기")).toBeNull();
+    expect(buttonWithText("지금 다시 시작")).toBeNull();
+    expect(buttonWithText("폴더에서 보기")).toBeNull();
+    expect(buttonWithText("지금 업데이트")).toBeNull();
   });
 
   it("starts a deb/rpm/flatpak update download from the omp-ui panel", async () => {
@@ -219,7 +235,7 @@ describe("Settings Updates page (issue #89)", () => {
       }),
     });
     await renderSettings();
-    click(buttonWithText("Download")!);
+    click(buttonWithText("다운로드")!);
     expect(backendMock.downloadAppUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -234,8 +250,8 @@ describe("Settings Updates page (issue #89)", () => {
         }),
       });
       await renderSettings();
-      expect(buttonWithText("Download")).toBeNull();
-      click(buttonWithText("Update")!);
+      expect(buttonWithText("다운로드")).toBeNull();
+      click(buttonWithText("업데이트")!);
       expect(backendMock.downloadAppUpdate).toHaveBeenCalledTimes(1);
     },
   );
@@ -249,7 +265,7 @@ describe("Settings Updates page (issue #89)", () => {
       }),
     });
     await renderSettings();
-    click(buttonWithText("View release")!);
+    click(buttonWithText("릴리스 보기")!);
     expect(backendMock.openAppUpdateReleaseNotes).toHaveBeenCalledTimes(1);
     expect(backendMock.downloadAppUpdate).not.toHaveBeenCalled();
   });
@@ -263,7 +279,7 @@ describe("Settings Updates page (issue #89)", () => {
       }),
     });
     await renderSettings();
-    click(buttonWithText("Restart now")!);
+    click(buttonWithText("지금 다시 시작")!);
     expect(backendMock.restartForAppUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -276,7 +292,7 @@ describe("Settings Updates page (issue #89)", () => {
       }),
     });
     await renderSettings();
-    click(buttonWithText("Restart now")!);
+    click(buttonWithText("지금 다시 시작")!);
     expect(backendMock.restartForAppUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -290,10 +306,10 @@ describe("Settings Updates page (issue #89)", () => {
     });
     await renderSettings();
 
-    expect(document.body.textContent).toContain("applying 1.2.0…");
-    expect(buttonWithText("Restart now")).toBeNull();
-    expect(buttonWithText("Install when I quit")).toBeNull();
-    expect(buttonWithText("Check now")?.disabled).toBe(true);
+    expect(document.body.textContent).toContain("1.2.0 적용 중…");
+    expect(buttonWithText("지금 다시 시작")).toBeNull();
+    expect(buttonWithText("종료할 때 설치")).toBeNull();
+    expect(buttonWithText("지금 확인")?.disabled).toBe(true);
   });
 
   it("offers Show in folder once an installer download finishes", async () => {
@@ -306,8 +322,8 @@ describe("Settings Updates page (issue #89)", () => {
       }),
     });
     await renderSettings();
-    expect(buttonWithText("Restart now")).toBeNull();
-    click(buttonWithText("Show in folder")!);
+    expect(buttonWithText("지금 다시 시작")).toBeNull();
+    click(buttonWithText("폴더에서 보기")!);
     expect(backendMock.showAppUpdateDownload).toHaveBeenCalledTimes(1);
   });
 
@@ -322,7 +338,7 @@ describe("Settings Updates page (issue #89)", () => {
       },
     });
     await renderSettings();
-    click(buttonWithText("Update now")!);
+    click(buttonWithText("지금 업데이트")!);
     expect(backendMock.downloadOmpUpdate).toHaveBeenCalledTimes(1);
   });
 });
@@ -342,7 +358,7 @@ describe("Settings General page plan format (issue #109)", () => {
   it("shows the configured format and persists a switch to markdown", async () => {
     seedGeneral("html");
     await renderSettings();
-    expect(document.body.textContent).toContain("Plan format");
+    expect(document.body.textContent).toContain("계획 형식");
     expect(buttonWithText("html")!.getAttribute("aria-pressed")).toBe("true");
     expect(buttonWithText("markdown")!.getAttribute("aria-pressed")).toBe(
       "false",
@@ -377,8 +393,8 @@ describe("Settings General page hibernate idle sessions (issue #246)", () => {
   it("shows the persisted window and persists a change", async () => {
     seedGeneral(30);
     await renderSettings();
-    expect(document.body.textContent).toContain("Hibernate idle sessions");
-    expect(document.body.textContent).toContain("each project's most recently active session");
+    expect(document.body.textContent).toContain("유휴 세션 최대 절전");
+    expect(document.body.textContent).toContain("각 프로젝트의 최근 세션");
     expect(buttonWithText("30 min")!.getAttribute("aria-pressed")).toBe("true");
     expect(buttonWithText("1 hour")!.getAttribute("aria-pressed")).toBe("false");
 
@@ -408,7 +424,7 @@ describe("Settings General page stream-stall watchdog (issue #248)", () => {
   it("shows the persisted window and persists a change", async () => {
     seedGeneral(180);
     await renderSettings();
-    expect(document.body.textContent).toContain("Stream-stall watchdog");
+    expect(document.body.textContent).toContain("스트림 멈춤 감시");
     expect(buttonWithText("3 min")!.getAttribute("aria-pressed")).toBe("true");
     expect(buttonWithText("5 min")!.getAttribute("aria-pressed")).toBe("false");
 
@@ -421,8 +437,8 @@ describe("Settings General page stream-stall watchdog (issue #248)", () => {
     await renderSettings();
     // Both this row and "Hibernate idle sessions" offer "off" — scope to the watchdog's group.
     const pressed = [
-      ...document.querySelectorAll('[aria-label="stall watchdog"] [aria-pressed]'),
-    ].find((b) => b.textContent === "off");
+      ...document.querySelectorAll('[aria-label="스트림 멈춤 감시"] [aria-pressed]'),
+    ].find((b) => b.textContent === "사용 안 함");
     expect(pressed?.getAttribute("aria-pressed")).toBe("true");
   });
 });
@@ -448,7 +464,7 @@ describe("Settings General page default agent mode (issue #143)", () => {
 describe("Settings General page default compaction method (issue #275)", () => {
   const pickerButtons = (): HTMLButtonElement[] => [
     ...document.querySelectorAll<HTMLButtonElement>(
-      '[role="group"][aria-label="default compaction method"] button',
+      '[role="group"][aria-label="기본 압축 방식"] button',
     ),
   ];
   const labelOf = (button: HTMLButtonElement): string =>
@@ -467,9 +483,9 @@ describe("Settings General page default compaction method (issue #275)", () => {
     });
     await renderSettings();
     expect(pickerButtons().map(labelOf)).toEqual([
-      "omp configured default",
-      "Soft compaction",
-      "OpenAI server compaction",
+      "omp 설정 기본값",
+      "소프트 압축",
+      "OpenAI 서버 압축",
       "future",
     ]);
     // The persisted method is pressed; the unknown id "future" got the raw
@@ -477,10 +493,10 @@ describe("Settings General page default compaction method (issue #275)", () => {
     expect(pickerButtons()[1].getAttribute("aria-pressed")).toBe("true");
     expect(pickerButtons()[3].children).toHaveLength(1);
     expect(document.body.textContent).toContain(
-      "Summarize in place with a compaction model without using server compaction",
+      "서버 압축 없이 압축 모델로 현재 기록을 요약합니다.",
     );
     expect(document.body.textContent).toContain(
-      "Use provider-native OpenAI-compatible server compaction when the active route supports it",
+      "현재 경로가 지원할 때 공급자 고유의 OpenAI 호환 서버 압축을 사용합니다.",
     );
     click(pickerButtons()[0]);
     expect(backendMock.setDefaultCompactionMethod).toHaveBeenCalledWith(null);
@@ -502,7 +518,7 @@ describe("Settings General page default compaction method (issue #275)", () => {
     });
     await renderSettings();
     const unavailable = pickerButtons().find((button) =>
-      labelOf(button).includes("removed (unavailable)"),
+      labelOf(button).includes("removed (사용할 수 없음)"),
     )!;
     expect(unavailable.disabled).toBe(true);
     expect(unavailable.getAttribute("aria-pressed")).toBe("true");
@@ -521,8 +537,8 @@ describe("Settings General page default compaction method (issue #275)", () => {
     });
     await renderSettings();
     expect(pickerButtons()).toHaveLength(1);
-    expect(labelOf(pickerButtons()[0])).toBe("omp configured default");
-    expect(document.body.textContent).toContain("Methods unavailable: omp binary not found");
+    expect(labelOf(pickerButtons()[0])).toBe("omp 설정 기본값");
+    expect(document.body.textContent).toContain("방식을 불러올 수 없습니다: omp binary not found");
     click(pickerButtons()[0]);
     expect(backendMock.setDefaultCompactionMethod).toHaveBeenCalledWith(null);
   });
@@ -542,7 +558,7 @@ describe("Settings General page advisor auto-reply (issue #111)", () => {
 
   const autoReplySwitch = (): HTMLElement =>
     document.querySelector(
-      '[role="switch"][aria-label="Advisor auto-reply"]',
+      '[role="switch"][aria-label="어드바이저 자동 응답"]',
     ) as HTMLElement;
 
   it("shows the setting on and persists switching it off", async () => {
@@ -574,7 +590,7 @@ describe("Settings General page stall auto-continue (issue #251)", () => {
 
   const autoContinueSwitch = (): HTMLElement =>
     document.querySelector(
-      '[role="switch"][aria-label="Stall auto-continue"]',
+      '[role="switch"][aria-label="멈춤 자동 계속"]',
     ) as HTMLElement;
 
   it("shows the setting on and persists switching it off", async () => {
@@ -606,7 +622,7 @@ describe("Settings General page desktop notifications (issue #271)", () => {
 
   const notificationsSwitch = (): HTMLElement =>
     document.querySelector(
-      '[role="switch"][aria-label="Desktop notifications"]',
+      '[role="switch"][aria-label="데스크톱 알림"]',
     ) as HTMLElement;
 
   it("shows the setting on and persists switching it off", async () => {
@@ -638,7 +654,7 @@ describe("Settings General page default advisor (issue #174)", () => {
 
   const defaultAdvisorSwitch = (): HTMLElement =>
     document.querySelector(
-      '[role="switch"][aria-label="Default advisor"]',
+      '[role="switch"][aria-label="기본 어드바이저"]',
     ) as HTMLElement;
 
   it("shows the setting off and persists switching it on", async () => {
@@ -706,7 +722,7 @@ describe("Settings omp Providers group (issues #178 and #179)", () => {
     await renderSettings();
 
     expect(document.body.textContent).toContain(
-      "nitro variant prioritizes throughput",
+      "nitro 변형은 처리량을 우선합니다",
     );
     const select = document.querySelector<HTMLSelectElement>(
       'select[aria-label="providers.openrouterVariant"]',
@@ -742,8 +758,8 @@ describe("Settings omp Providers group (issues #178 and #179)", () => {
   it("offers the global MCP manager without a focused session", async () => {
     seedOmp(emptyOmpSettings);
     await renderSettings();
-    const globalBtn = buttonWithText("Global MCP servers…");
-    const projectBtn = buttonWithText("MCP servers…");
+    const globalBtn = buttonWithText("전역 MCP 서버…");
+    const projectBtn = buttonWithText("MCP 서버…");
     expect(globalBtn).not.toBeNull();
     expect(globalBtn!.disabled).toBe(false);
     expect(projectBtn!.disabled).toBe(true);
@@ -876,8 +892,8 @@ describe("Settings Memory page (issue #213)", () => {
     expect(document.body.textContent).toContain("/home/a/.omp/memory");
     expect(document.body.textContent).toContain("/home/a/.omp/memory/global/db.sqlite");
     expect(document.body.textContent).toContain("/home/a/.omp/memory/project-abc/db.sqlite");
-    expect(document.body.textContent).toContain("exists");
-    expect(document.body.textContent).toContain("not created");
+    expect(document.body.textContent).toContain("있음");
+    expect(document.body.textContent).toContain("아직 없음");
   });
 
   it("writes through the existing path, then refreshes settings and overview", async () => {
@@ -903,7 +919,7 @@ describe("Settings Memory page (issue #213)", () => {
 
     expect(backendMock.memoryOverview).not.toHaveBeenCalled();
     expect(document.body.textContent).toContain(
-      "Focus a session tab to inspect its resolved backend and bank locations.",
+      "세션 탭을 선택하면 적용 중인 백엔드와 뱅크 위치를 확인할 수 있습니다.",
     );
     expect(
       document.querySelector('[role="switch"][aria-label="mnemopi.autoRecall"]'),
@@ -932,7 +948,7 @@ describe("Settings Remote page password row", () => {
 
   function passwordInput(): HTMLInputElement {
     const input = document.body.querySelector<HTMLInputElement>(
-      'input[aria-label="remote access password"]',
+      'input[aria-label="원격 접속 비밀번호"]',
     );
     expect(input).not.toBeNull();
     return input!;
@@ -966,7 +982,7 @@ describe("Settings Remote page password row", () => {
     seedRemote({ hasPassword: true });
     await renderSettings();
 
-    expect(document.body.textContent).toContain("password set");
+    expect(document.body.textContent).toContain("비밀번호 설정됨");
     click(buttonWithText("Clear")!);
     await act(async () => {});
 
@@ -975,13 +991,13 @@ describe("Settings Remote page password row", () => {
 });
 describe("Settings page footer dispatch (issue #300)", () => {
   const cases: ReadonlyArray<{ page: SettingsPage; marker: string | null }> = [
-    { page: "general", marker: "Default session and agent modes apply to new sessions" },
+    { page: "general", marker: "기본 세션·에이전트 모드는 새 세션부터 적용" },
     { page: "appearance", marker: null },
-    { page: "updates", marker: "Downloads always need a click." },
-    { page: "remote", marker: "Changing anything here restarts only the server" },
-    { page: "providers", marker: "omp reads credentials from the environment" },
-    { page: "memory", marker: "Memory configuration applies to sessions started after the change" },
-    { page: "omp", marker: "omp binds model roles and the advisor at process start" },
+    { page: "updates", marker: "다운로드와 설치는 항상 사용자가 눌러야 시작됩니다." },
+    { page: "remote", marker: "여기의 설정을 바꾸면 서버만 다시 시작" },
+    { page: "providers", marker: "omp는 환경 변수에서 인증정보를 읽으므로" },
+    { page: "memory", marker: "메모리 설정은 변경 후 시작한 세션부터 적용됩니다." },
+    { page: "omp", marker: "omp는 프로세스 시작 시 모델 역할과 어드바이저 설정을 불러오므로" },
     { page: "about", marker: null },
   ];
   for (const { page, marker } of cases) {
@@ -1014,13 +1030,13 @@ describe("Settings Appearance page font family (issue #315)", () => {
 
   const fontCard = (id: string): HTMLButtonElement =>
     document.querySelector<HTMLButtonElement>(
-      `button[aria-label="${id} font family"]`,
+      `button[aria-label="${id} 글꼴"]`,
     )!;
 
   it("shows the persisted family and persists a switch to Ubuntu", async () => {
     seedAppearance("default");
     await renderSettings();
-    expect(document.body.textContent).toContain("Font family");
+    expect(document.body.textContent).toContain("글꼴");
     expect(fontCard("Default").getAttribute("aria-pressed")).toBe("true");
     expect(fontCard("Ubuntu").getAttribute("aria-pressed")).toBe("false");
 
