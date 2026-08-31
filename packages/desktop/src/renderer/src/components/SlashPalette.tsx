@@ -65,6 +65,7 @@ export function SlashPalette({
   const needle = query.split(/\s/, 1)[0];
 
   const groups = useMemo(() => {
+    const skills: Scored[] = [];
     const builtin: Scored[] = [];
     const other: Scored[] = [];
     for (const command of commands) {
@@ -75,26 +76,27 @@ export function SlashPalette({
       ]);
       if (best === null) continue;
       const hit = { command, score: best.score, hits: best.hits };
-      (command.source === undefined || command.source === "builtin" ? builtin : other).push(hit);
+      if (command.source === "skill") skills.push(hit);
+      else if (command.source === undefined || command.source === "builtin") builtin.push(hit);
+      else other.push(hit);
     }
-    for (const list of [builtin, other]) {
+    for (const list of [skills, builtin, other]) {
       list.sort((a, b) => b.score - a.score || a.command.name.localeCompare(b.command.name));
     }
-    // With 33 builtins, a better-matching skill command must not be buried
-    // below them — whichever group holds the single best hit leads.
-    const topBuiltin = builtin.length > 0 ? builtin[0].score : -Infinity;
-    const topOther = other.length > 0 ? other[0].score : -Infinity;
-    const ordered =
-      topOther > topBuiltin
-        ? [
-            { label: "extensions", items: other },
-            { label: "builtin", items: builtin },
-          ]
-        : [
-            { label: "builtin", items: builtin },
-            { label: "extensions", items: other },
-          ];
-    return ordered.filter((g) => g.items.length > 0);
+    // A bare "/" is primarily discovery: show OMP's installed skills before
+    // 100+ builtin/subcommand rows. Once the user types, the best-matching
+    // group leads; ties still favor skills, then builtins, then extensions.
+    return [
+      { label: "스킬", items: skills, priority: 0 },
+      { label: "내장 명령", items: builtin, priority: 1 },
+      { label: "확장 명령", items: other, priority: 2 },
+    ]
+      .filter((group) => group.items.length > 0)
+      .sort(
+        (a, b) =>
+          (b.items[0]?.score ?? -Infinity) - (a.items[0]?.score ?? -Infinity) ||
+          a.priority - b.priority,
+      );
   }, [commands, needle]);
 
   const groupedRows = useMemo(

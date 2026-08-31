@@ -757,6 +757,48 @@ describe("Composer BuildPlanControl", () => {
   });
 });
 
+describe("Composer slash skill discovery", () => {
+  it("shows installed skills first for a bare slash and inserts the picked skill", () => {
+    seed("ready");
+    useStore.setState((s) => ({
+      runSlashCommand,
+      rpc: {
+        ...s.rpc,
+        [TAB]: {
+          ...s.rpc[TAB]!,
+          commands: [
+            {
+              name: "model",
+              description: "show current model",
+              source: "builtin",
+              subcommands: [{ name: "list", description: "list models" }],
+            },
+            {
+              name: "skill:frontend-design",
+              description: "design intentional interfaces",
+              source: "skill",
+              input: { hint: "arguments" },
+            },
+          ],
+        },
+      },
+    }));
+    renderComposer();
+    const textarea = typeDraft("/");
+    const rows = [
+      ...document.body.querySelectorAll<HTMLButtonElement>('button[aria-label^="/"]'),
+    ];
+    expect(rows[0]?.getAttribute("aria-label")).toContain("/skill:frontend-design:");
+    expect(document.body.textContent!.indexOf("스킬")).toBeLessThan(
+      document.body.textContent!.indexOf("내장 명령"),
+    );
+
+    act(() => rows[0]!.click());
+    expect(textarea.value).toBe("/skill:frontend-design ");
+    expect(runSlashCommand).not.toHaveBeenCalled();
+  });
+});
+
 describe("Composer width refit", () => {
   it("re-fits when the box width changes without a text change", () => {
     let ro: (() => void) | null = null;
